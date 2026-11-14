@@ -31,8 +31,8 @@ const persist = () => { try { writeFileSync(STATE, JSON.stringify(state)); } cat
 export let current = null;
 let world = null;
 export function recompute() {
-  world = loadWorld();
-  current = analyze(world, new Date());
+  try { world = loadWorld(); current = analyze(world, new Date()); }
+  catch (e) { say("could not analyse, keeping the last good answer: " + String(e.message).slice(0, 120)); if (!current) throw e; }
   return current;
 }
 
@@ -67,11 +67,45 @@ function diffDigest(p, n) {
   return out;
 }
 
+
+// Accounts released mid-build come from get_new_account. Whatever shape it answers in, keep every
+// object that looks like an account (people + facts), and store them apart from get_my_accounts.
+function findAccounts(x, out = []) {
+  if (Array.isArray(x)) { x.forEach((y) => findAccounts(y, out)); return out; }
+  if (x && typeof x === "object") {
+    if (Array.isArray(x.stakeholders) && Array.isArray(x.facts)) { out.push(x); return out; }
+    Object.values(x).forEach((y) => findAccounts(y, out));
+  }
+  return out;
+}
+async function pullNewAccounts() {
+  let res;
+  try { res = await callTool("get_new_account"); } catch (e) { say("get_new_account: " + String(e.message).slice(0, 120)); return false; }
+  save("get_new_account", res);
+  const found = findAccounts(res).map((a, i) => ({ ...a, id: a.id ?? a.account ?? `N${i + 1}` }));
+  if (!found.length) return false;
+  const prev = existsSync(RAW + "extra_accounts.json") ? JSON.parse(readFileSync(RAW + "extra_accounts.json", "utf8")) : { accounts: [], files: [] };
+  const fresh = found.filter((a) => !prev.accounts.some((p) => p.id === a.id));
+  const files = [...(prev.files ?? [])];
+  for (const a of found) for (const f of a.files ?? []) if (!files.some((x) => x.id === f.id)) files.push({ account: a.id, ...f });
+  const accounts = [...prev.accounts.filter((p) => !found.some((a) => a.id === p.id)), ...found];
+  const changed = JSON.stringify(prev.accounts) !== JSON.stringify(accounts);
+  save("extra_accounts", { accounts, files });
+  for (const a of found) {
+    if (!existsSync(RAW + `paperwork_${a.id}.json`) || fresh.some((f) => f.id === a.id)) {
+      try { save(`paperwork_${a.id}`, await callTool("get_all_paperwork", { account: a.id })); } catch (e) { say(`paperwork for ${a.id}: ` + String(e.message).slice(0, 100)); }
+    }
+  }
+  if (fresh.length) addFeed("data", `New account released: ${fresh.map((a) => a.name ?? a.id).join(", ")}. Taking it in.`);
+  return changed;
+}
+
 async function refreshAll(reason) {
   status.busy = "refreshing: " + reason; say("refreshing (" + reason + ")");
   const before = digest(); addFeed("data", `New data detected (${reason}). Pulling accounts and records.`);
   const accounts = await callTool("get_my_accounts"); save("get_my_accounts", accounts);
   state.exportHash = hash(stable(accounts));
+  await pullNewAccounts();
   for (const a of accounts.accounts) { save(`paperwork_${a.id}`, await callTool("get_all_paperwork", { account: a.id })); }
   for (const f of accounts.files ?? []) {
     if (!existsSync(RAW + `file_${f.id}.json`)) save(`file_${f.id}`, await callTool("get_file", { id: f.id }));
@@ -115,6 +149,7 @@ async function poll() {
       status.lastPoll = new Date().toISOString();
       if (state.exportHash && hash(stable(accounts)) !== state.exportHash) { save("get_my_accounts", accounts); await refreshAll("accounts changed"); }
       else { state.exportHash = hash(stable(accounts)); }
+      if (await pullNewAccounts()) await refreshAll("new account released");
     } else {
       const sig = await callTool("get_signals");
       status.lastPoll = new Date().toISOString();
@@ -146,6 +181,7 @@ export function startLive() {
       if (found) { status.notesWritten += found; addFeed("note", `${found} next-step notes written earlier are already in the game, so they are not repeated.`); }
       persist();
     } catch (e) { say("list_notes failed: " + String(e.message).slice(0, 120)); }
+    try { if (await pullNewAccounts()) recompute(); } catch (e) { say("new account check failed: " + String(e.message).slice(0, 120)); }
     await writeBack().catch(() => {}); for (;;) { await poll(); status.nextPoll = new Date(Date.now() + 65_000).toISOString(); await new Promise((r) => setTimeout(r, 65_000)); } })();
 }
 

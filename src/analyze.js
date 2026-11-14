@@ -18,7 +18,7 @@ export function analyze(world, asOf = new Date()) {
     return { value, cites: c };
   };
 
-  const accounts = world.export.accounts.map((a) => {
+  const accounts = world.export.accounts.map((a) => { try {
     const pw = world.paperwork[a.id] ?? {};
     const profile = pw["profile.json"]?.json;
     const factBy = Object.fromEntries(a.facts.map((f) => [f.id, f]));
@@ -34,7 +34,7 @@ export function analyze(world, asOf = new Date()) {
     const contractText = pw["contract.txt"]?.text ?? "";
     const termEnd = profile?.renewal?.term_ends ?? null;
     const annual = profile?.renewal?.annual_value ?? null;
-    const profileRef = `${a.id}:profile.json`;
+    const profileRef = pw["profile.json"] ? `${a.id}:profile.json` : `${a.id}:account`; // no contract profile on file: cite the account record itself
 
     // ---------- evidence strength for an id ----------
     const strength = (id) => {
@@ -75,7 +75,7 @@ export function analyze(world, asOf = new Date()) {
     const sum = (pred) => lines.filter(pred).reduce((t, l) => t + (l.value?.value ?? 0), 0);
     const idsOf = (pred) => lines.filter(pred).map((l) => l.id);
     const totals = {
-      recurring: annual != null ? n(annual, profileRef) : null,
+      recurring: n(annual ?? 0, profileRef), // none on file shows as "none", never a guess
       closedExpansion: n(sum((l) => l.kind === "offer" && l.backing === "closed") + sum((l) => l.kind === "opportunity" && l.status.startsWith("agreed")),
         ...idsOf((l) => (l.kind === "offer" && l.backing === "closed") || (l.kind === "opportunity" && l.status.startsWith("agreed"))), profileRef),
       renewalAtStake: n(sum((l) => l.kind === "opportunity" && /renew/i.test(l.title) && !l.status.startsWith("agreed")), ...idsOf((l) => l.kind === "opportunity" && /renew/i.test(l.title) && !l.status.startsWith("agreed")), profileRef),
@@ -308,7 +308,7 @@ export function analyze(world, asOf = new Date()) {
     const q5 = { unknown };
 
     return { id: a.id, name: a.name, q1, q2, q3, q4, q5 };
-  });
+  } catch (e) { console.error(`[analyze] account ${a.id} skipped: ${e.message}`); return null; } }).filter(Boolean);
   return { asOf: today, exportedAt: world.export.exported_at, accounts, refs };
 }
 
@@ -397,6 +397,7 @@ export function buildRefs(world) {
     for (const o of a.opportunities) put(o.id, "deal", a.id, o.title, JSON.stringify(o, null, 2));
     for (const f of a.offers ?? []) put(f.id, "offer", a.id, f.title, JSON.stringify(f, null, 2));
     a.deadlines.forEach((d, i) => put(`${a.id}:deadline:${i}`, "deadline", a.id, "Deadline", JSON.stringify(d, null, 2)));
+    put(`${a.id}:account`, "account", a.id, `${a.name}: account record`, `Official story: ${a.official_story ?? "none"}`);
     const pw = world.paperwork[a.id] ?? {};
     for (const [path, rec] of Object.entries(pw)) put(`${a.id}:${path}`, "paperwork", a.id, path, rec.text ?? JSON.stringify(rec.json, null, 2));
     for (const t of pw["tickets.json"]?.json?.tickets ?? []) put(t.id, "ticket", a.id, t.subject, JSON.stringify(t, null, 2));
