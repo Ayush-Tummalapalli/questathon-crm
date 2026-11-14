@@ -161,7 +161,11 @@ export function analyze(world, asOf = new Date()) {
         `Contract ends ${termEnd}${noAuto ? " and does not renew by itself" : ""}`, termEnd,
         `${left} days left on a ${annual != null ? annual.toLocaleString("en-GB") + " a year" : ""} order.`.trim(), profileRef, `${a.id}:contract.txt`);
     }
-    a.deadlines.forEach((d, i) => risk(d.passed ? "high" : "medium", d.text, d.minute != null ? `minute ${d.minute}` : "undated", d.passed ? "Already passed." : "No date given: needs one.", `${a.id}:deadline:${i}`));
+    a.deadlines.forEach((d, i) => {
+      const left = d.date ? daysBetween(today, d.date) : null;
+      risk(d.passed ? "high" : left != null && left <= 7 ? "high" : "medium", d.minute != null ? `${d.text} (minute ${d.minute} from the export)` : d.text, d.date ?? "undated",
+        d.passed ? "Already passed." : d.date ? `Falls on ${d.date}, ${left} day(s) from today, counting its minutes from the time of the export.` : "No date given: needs one.", `${a.id}:deadline:${i}`);
+    });
     for (const t of tickets.filter((x) => !/closed|resolved/i.test(x.status))) {
       const age = daysBetween(t.opened, today);
       const h = handledBy(t.id, t.subject);
@@ -221,8 +225,9 @@ export function analyze(world, asOf = new Date()) {
         score: (o.worth_up_to ?? 30000) * urgency * (strong.length ? 1.25 : 1),
         owner: { flytbase: "You (CSM)" + (myRole ? ` from ${myRole.from}` : ""), customer: cust ? { id: cite(cust.id), name: cust.name } : null, cite: cite(profileRef) },
         due: addDays(today, urgency === 2 ? 7 : days),
+        dlDate: o.deadline ? a.deadlines.find((d) => d.text === o.deadline.text)?.date ?? null : null,
         why: [
-          o.deadline ? `A deadline sits on it: ${o.deadline.text}${a.deadlines.find((d) => d.text === o.deadline.text)?.minute == null ? " It has no date on file, so this date is the earliest safe one, and the real date still has to be asked for." : ""}` : null,
+          o.deadline ? `A deadline sits on it: ${o.deadline.text}${a.deadlines.find((d) => d.text === o.deadline.text)?.date == null ? " It has no date on file, so this date is the earliest safe one, and the real date still has to be asked for." : ""}` : null,
           strong.length ? `You already hold ${strong.length} verified source(s) for it.` : "Backed only by what people said.",
           o.blocker ? `Blocker (${o.blocker.status}): ${o.blocker.text}` : "No blocker identified yet.",
         ].filter(Boolean),
@@ -242,7 +247,7 @@ export function analyze(world, asOf = new Date()) {
         why: [`Open since ${r.opened}; last update ${r.last_update}.`, r.owner ? `Owner: ${r.owner}.` : "No owner."], cites: cites(key) });
     }
     cand.sort((x, y) => y.score - x.score);
-    cand.forEach((c, i) => { c.due = addDays(c.due, Math.min(i, 3) * 2); if (termEnd && c.due > termEnd) c.due = termEnd; });
+    cand.forEach((c, i) => { c.due = addDays(c.due, Math.min(i, 3) * 2); if (termEnd && c.due > termEnd) c.due = termEnd; if (c.dlDate && c.due > c.dlDate) c.due = c.dlDate < today ? today : c.dlDate; delete c.dlDate; });
     const q3 = { moves: cand.slice(0, 3).map((c, i) => ({ rank: i + 1, ...c })), queue: cand.slice(3).map((c, i) => ({ rank: i + 4, ...c })),
       rule: "Score = value at stake × urgency (deadline or term under 90 days) × 1.25 if a verified source is held. Dates are inside the contract term." };
 

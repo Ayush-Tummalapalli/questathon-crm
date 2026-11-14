@@ -23,7 +23,11 @@ export function loadWorld() {
       if (o.worth_up_to == null && typeof o.value === "number") o.worth_up_to = o.value;
       if (typeof o.deadline === "string") o.deadline = { text: o.deadline };
     }
-    for (const d of a.deadlines) d.passed ??= false;
+    // Deadlines are "minutes from now" when the account was exported: turn them into dates once, here.
+    for (const d of a.deadlines) {
+      d.passed ??= false;
+      if (typeof d.minute === "number" && !d.date) d.date = new Date(new Date(exp.exported_at ?? Date.now()).getTime() + d.minute * 60000).toISOString().slice(0, 10);
+    }
     for (const f of a.facts) f.said_by ??= "";
   }
   const paperwork = {};
