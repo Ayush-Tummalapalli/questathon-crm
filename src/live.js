@@ -86,12 +86,16 @@ async function pullNewAccounts() {
   const once = (k, msg) => { if (state.lastNew !== k) { state.lastNew = k; addFeed("system", msg); } };
   // The tool wants an account id ("Missing: account"). The new one is not in get_my_accounts, so try the
   // likely ids: the next letter first, then the names. A working id is remembered.
-  const ids = state.newAcctId ? [state.newAcctId] : (process.env.AQ_NEW_ACCOUNT ? [process.env.AQ_NEW_ACCOUNT] : ["K", "C", "kestrel_estates", "kestrel", "Kestrel Estates"]);
+  // Each released account has its own id (Kestrel is "K", Brindle Harbour is "H"). Ask for every known id,
+  // plus any in AQ_NEW_ACCOUNT (comma separated) and any that worked before.
+  const ids = [...new Set([...(state.newIds ?? []), ...(process.env.AQ_NEW_ACCOUNT ?? "").split(",").map((x) => x.trim()).filter(Boolean), "K", "H"])];
   let lastErr = "";
+  const results = [];
   for (const id of ids) {
-    try { res = await callTool("get_new_account", { account: id }); state.newAcctId = id; break; }
+    try { results.push(await callTool("get_new_account", { account: id })); state.newIds = [...new Set([...(state.newIds ?? []), id])]; }
     catch (e) { lastErr = `${id}: ${String(e.message).slice(0, 140)}`; say("get_new_account " + lastErr); }
   }
+  res = results.length ? results : undefined;
   if (res === undefined) { once("err:" + lastErr, "get_new_account would not answer. Last try, " + lastErr); return false; }
   save("get_new_account", res);
   const found = findAccounts(res).map((a, i) => ({ ...a, id: a.id ?? a.account ?? `N${i + 1}` }));
