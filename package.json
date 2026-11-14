@@ -1,0 +1,12 @@
+{
+  "name": "questathon-crm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Live CRM that reads Account Quest data through the MCP and answers five questions per account.",
+  "scripts": {
+    "start": "node server.js",
+    "ping": "node scripts/ping.js"
+  },
+  "engines": { "node": ">=18" }
+}
