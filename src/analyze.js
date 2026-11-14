@@ -185,7 +185,7 @@ export function analyze(world, asOf = new Date()) {
       const idle = users.filter((x) => x.sign_ins_last_90_days === 0);
       const named = idle.filter((u) => u.name), unnamed = idle.filter((u) => !u.name);
       for (const u of named) risk("medium", `${u.name} has not signed in for 90+ days`, u.last_sign_in ? `last sign-in ${u.last_sign_in}` : "never signed in", `${u.role}. Nobody has used this login lately.`, `${a.id}:${u.user_id}`);
-      if (unnamed.length) risk("medium", `${unnamed.length} logins with no name on file have not signed in for 90+ days (${[...new Set(unnamed.map((u) => u.role))].join(", ")})`, "now", "The user record names only people on file as contacts, so we cannot say who they are. Unused logins often mean the dock is not used either.", ...unnamed.map((u) => `${a.id}:${u.user_id}`));
+      if (unnamed.length) risk("medium", `${unnamed.length} ${unnamed.length === 1 ? "login" : "logins"} with no name on file ${unnamed.length === 1 ? "has" : "have"} not signed in for 90+ days (${[...new Set(unnamed.map((u) => u.role))].join(", ")})`, "now", "The user record names only people on file as contacts, so we cannot say who they are. Unused logins often mean the dock is not used either.", ...unnamed.map((u) => `${a.id}:${u.user_id}`));
     }
     for (const i of inv.filter((x) => !/paid/i.test(x.status))) risk("high", `Invoice ${i.number} ${i.status}`, i.issued, i.what, i.number);
     const stale = devices.filter((d) => d.last_seen_online && daysBetween(d.last_seen_online, today) > 7);
@@ -245,11 +245,39 @@ export function analyze(world, asOf = new Date()) {
 
     // ---------- Q5: what we do not know ----------
     const unknown = [];
-    const askFor = (text) => a.stakeholders.find((s) => text.toLowerCase().includes(s.name.toLowerCase()) || text.toLowerCase().includes(s.role.toLowerCase().split(",")[0]))
-      ?? a.stakeholders.find((s) => s.relationship === "ally") ?? a.stakeholders[0];
+    const SYN = [
+      [/finance|budget|saving|cost|quote|price|pay|invoice|verify/i, /finance|procure|commercial|budget/i, "finance"],
+      [/procure|tender|framework|contract/i, /procure|commercial|legal/i, "procurement"],
+      [/dock|force|site|plant|usage|flight|fly|adopt|roll ?out/i, /operator|inspector|unit|pilot|security|patrol|head|lead|manager/i, "uses the docks"],
+      [/network|it\b|link|connect|firewall/i, /\bit\b|network|security|infrastructure|engineer/i, "network"],
+      [/deputy|handover|know-how/i, /head|lead|deputy|manager|owner/i, "rollout"],
+    ];
+    const STOP = new Set(["the","and","for","with","that","this","from","were","was","not","any","one","name","named","who","which","into","about","than","have","been","their","them","she","her","his"]);
+    const words = (t) => new Set(String(t).toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(" ").filter((w) => w.length > 3 && !STOP.has(w)));
+    const openDeals = a.opportunities.filter((o) => !["agreed"].includes(o.stage) && o.blocker?.status !== "cleared");
+    const dealFor = (text) => {
+      const tw = words(text); let best = null, bs = 0;
+      for (const o of openDeals) {
+        const ow = words(`${o.title} ${o.blocker?.text ?? ""}`); let sc = 0; tw.forEach((w) => ow.has(w) && sc++);
+        for (const [re] of SYN) if (re.test(text) && re.test(`${o.title} ${o.blocker?.text ?? ""}`)) sc += 1.5;
+        if (sc > bs) { bs = sc; best = o; }
+      }
+      return bs >= 1.5 ? best : null;
+    };
+    const whyFor = (text, fallback) => {
+      const o = dealFor(text);
+      return o ? { why: `Likely matters for "${o.title}"${o.worth_up_to != null ? " (up to €" + o.worth_up_to.toLocaleString("en-GB") + ")" : ""}${o.blocker?.status === "open" ? ", blocked: " + o.blocker.text : ""}.`, deal: o.id } : { why: fallback, deal: null };
+    };
+    const askBy = (text) => {
+      const named = a.stakeholders.find((s) => text.toLowerCase().includes(s.name.toLowerCase()));
+      if (named) return { s: named, basis: "named in the gap" };
+      for (const [re, roleRe, label] of SYN) if (re.test(text)) { const s = a.stakeholders.find((x) => roleRe.test(x.role)); if (s) return { s, basis: `job title fits (${label})` }; }
+      const ally = a.stakeholders.find((s) => s.relationship === "ally") ?? a.stakeholders[0];
+      return ally ? { s: ally, basis: "nobody on file fits; closest ally, a guess" } : null;
+    };
     for (const t of profile?.not_on_file ?? []) {
-      const ask = askFor(t);
-      unknown.push({ what: t, why: "Recorded as missing in the account profile.", ask: ask ? { id: cite(ask.id), name: ask.name, basis: "closest stakeholder, suggested" } : null, cites: cites(profileRef) });
+      const ask = askBy(t), w = whyFor(t, "Recorded as missing in the account profile, and no open deal clearly depends on it yet.");
+      unknown.push({ what: t, why: w.why, ask: ask ? { id: cite(ask.s.id), name: ask.s.name, basis: ask.basis } : null, cites: cites(profileRef, ...(w.deal ? [w.deal] : [])) });
     }
     for (const c of claims) unknown.push({ what: `Unverified claim by ${c.said_by}: "${c.text}"`, why: c.record.length ? "The record tells a different or narrower story." : "Nothing on file backs it.", ask: (() => { const s = stakeholderByName[c.said_by.toLowerCase()]; return s ? { id: cite(s.id), name: s.name, basis: "the person who said it" } : null; })(), cites: c.cites });
     for (const o of a.opportunities.filter((x) => x.blocker?.status === "open")) {
@@ -268,8 +296,8 @@ export function analyze(world, asOf = new Date()) {
         const a1 = act.activeCount / act.total, b1 = usageSummary.withFlights.value / usageSummary.docks;
         if (Math.abs(a1 - b1) > 0.25) unknown.push({
           what: `${usageSummary.withFlights.value} of ${usageSummary.docks} docks logged flights, but only ${act.activeCount} of ${act.total} ${act.title.toLowerCase().includes("plant") ? "plants" : "entries"} show regular live activity in ${act.title}`,
-          why: "The two records disagree and nothing on file links a dock to a site, so which one is right is open.",
-          ask: (() => { const s = a.stakeholders.find((x) => x.relationship === "ally") ?? a.stakeholders[0]; return s ? { id: cite(s.id), name: s.name, basis: "closest ally, suggested" } : null; })(),
+          why: `The two records disagree and nothing on file links a dock to a site. ${whyFor("dock usage adoption", "").why}`.trim(),
+          ask: (() => { const k = askBy("which dock sits at which force site usage"); return k ? { id: cite(k.s.id), name: k.s.name, basis: k.basis } : null; })(),
           cites: cites(act.file, ...usageSummary.withFlights.cites),
         });
       }
