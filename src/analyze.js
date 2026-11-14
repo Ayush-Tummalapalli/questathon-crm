@@ -20,6 +20,8 @@ export function analyze(world, asOf = new Date()) {
 
   const skipped = [];
   const accounts = world.export.accounts.map((a) => { try {
+    // evidence the game names but whose record we could not fetch is left out, not invented
+    for (const o of a.opportunities) o.evidence = (o.evidence ?? []).filter((id) => refs[id]);
     const pw = world.paperwork[a.id] ?? {};
     const profile = pw["profile.json"]?.json;
     const factBy = Object.fromEntries(a.facts.map((f) => [f.id, f]));

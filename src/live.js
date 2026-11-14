@@ -100,6 +100,18 @@ async function pullNewAccounts() {
   const fresh = found.filter((a) => !prev.accounts.some((p) => p.id === a.id));
   const files = [...(prev.files ?? [])];
   for (const a of found) for (const f of a.files ?? []) if (!files.some((x) => x.id === f.id)) files.push({ account: a.id, ...f });
+  // Files the new account points at: listed ones, files that verify a fact, and files named as deal evidence.
+  for (const a of found) {
+    const factIds = new Set(a.facts.map((f) => f.id)), people = new Set(a.stakeholders.map((x) => x.id));
+    const want = new Set([...(a.files ?? []).map((f) => f.id), ...a.facts.map((f) => f.verified_by).filter(Boolean),
+      ...(a.opportunities ?? []).flatMap((o) => o.evidence ?? []).filter((id) => !factIds.has(id) && !people.has(id))]);
+    for (const id of want) {
+      if (existsSync(RAW + `file_${id}.json`)) { if (!files.some((x) => x.id === id)) files.push({ id, title: id, account: a.id }); continue; }
+      let got = null;
+      for (const args of [{ id }, { account: a.id, id }]) { try { got = await callTool("get_file", args); break; } catch (e) { say(`get_file ${id}: ` + String(e.message).slice(0, 100)); } }
+      if (got) { save(`file_${id}`, got); const listed = (a.files ?? []).find((f) => f.id === id); files.push({ id, title: listed?.title ?? got.name ?? id, ...listed, account: a.id }); }
+    }
+  }
   const accounts = [...prev.accounts.filter((p) => !found.some((a) => a.id === p.id)), ...found];
   const changed = JSON.stringify(prev.accounts) !== JSON.stringify(accounts);
   save("extra_accounts", { accounts, files });
