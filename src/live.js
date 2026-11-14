@@ -121,7 +121,12 @@ async function poll() {
       const list = Array.isArray(sig) ? sig : sig?.signals ?? [];
       status.signalsSeen = list.length;
       const h = hash(list);
-      if (state.signalHash !== null && h !== state.signalHash && list.length) { save("get_signals", sig); state.signalHash = h; await refreshAll("new signals"); }
+      if (state.signalHash !== null && h !== state.signalHash && list.length) {
+        const known = new Set(state.signalIds ?? []);
+        for (const s of list) if (s?.id && !known.has(s.id)) addFeed("data", `New signal${s.account ? " for account " + s.account : ""}: ${String(s.title ?? s.id).slice(0, 140)}`);
+        save("get_signals", sig); state.signalHash = h; await refreshAll("new signals");
+      }
+      state.signalIds = list.map((s) => s?.id).filter(Boolean);
       state.signalHash = h;
     }
     status.lastError = null; status.busy = ""; persist();
