@@ -1,97 +1,165 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Account CRM · Eastern Counties & Aldermoor</title>
+<title>Account CRM: Eastern Counties and Aldermoor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f5f1;--card:#fff;--ink:#1d2330;--mute:#667085;--line:#e4e1d8;--acc:#1f5eff;--ok:#12805c;--warn:#b25e09;--bad:#b42318}
-*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 24px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-h1{font-size:17px;margin:0}.tabs button{font:inherit;padding:6px 14px;border:1px solid var(--line);background:#fff;border-radius:999px;cursor:pointer;margin-right:6px}
-.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.live{font-size:12.5px;color:var(--mute)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#999;margin-right:6px}.dot.on{background:var(--ok)}
-main{max-width:1100px;margin:0 auto;padding:20px}
-section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
-h2{font-size:16px;margin:0 0 2px}.q{color:var(--mute);font-size:13px;margin-bottom:12px}
-h3{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);margin:16px 0 6px}
-table{border-collapse:collapse;width:100%;font-size:14px}td,th{text-align:left;padding:6px 8px;border-top:1px solid var(--line);vertical-align:top}th{color:var(--mute);font-weight:600;font-size:12px;border-top:0}
-.big{font-size:24px;font-weight:650}.kpis{display:flex;flex-wrap:wrap;gap:12px}.kpi{flex:1 1 150px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}.kpi small{color:var(--mute);display:block}
-.cite{font:11px ui-monospace,Menlo,monospace;background:#eef2ff;color:#2b3fb5;border:0;border-radius:5px;padding:1px 5px;margin:0 2px;cursor:pointer}
-.cite:hover{background:#dbe4ff}.pill{font-size:11.5px;border-radius:999px;padding:1px 8px;border:1px solid var(--line);white-space:nowrap}
-.backed,.low{color:var(--ok);border-color:#b7e3d1}.partial,.medium{color:var(--warn);border-color:#f2d3a8}.unbacked,.high{color:var(--bad);border-color:#f3b8b2}
-.mute{color:var(--mute)}.note{font-size:13px;color:var(--mute);margin-top:6px}
-.sep{border:1px dashed var(--bad);border-radius:10px;padding:8px 12px;margin-top:10px;background:#fff8f7}
-.spark{font:12px ui-monospace,monospace;letter-spacing:1px}
-#drawer{position:fixed;right:0;top:0;bottom:0;width:min(460px,100%);background:#fff;border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.08);padding:20px;overflow:auto;transform:translateX(105%);transition:.2s;z-index:10}
-#drawer.open{transform:none}#drawer pre{white-space:pre-wrap;font:12.5px/1.5 ui-monospace,monospace;background:#f6f5f1;padding:10px;border-radius:8px}
-#drawer .x{float:right;border:0;background:none;font-size:20px;cursor:pointer}
-.move{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.rank{font-size:20px;font-weight:700;color:var(--acc)}
-.meta{font-size:13px;color:var(--mute)}
+:root{--ground:#edf0f2;--panel:#fff;--ink:#16222c;--mute:#5d6b76;--rule:#d5dbe0;--teal:#0a6b6b;--teal-bg:#e3f1f0;--amber:#b26a00;--amber-bg:#fbf0dc;--red:#b8362a;--red-bg:#fbe9e6;--green:#1d7a52;
+ --head:"Bricolage Grotesque",system-ui,sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:15px/1.55 var(--body);color:var(--ink);background:var(--ground);display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh;font-variant-numeric:tabular-nums}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+/* rail */
+nav{position:sticky;top:0;height:100vh;padding:26px 22px;background:var(--ink);color:#e8eef2;display:flex;flex-direction:column;gap:26px}
+nav h1{font:700 20px/1.15 var(--head);margin:0;letter-spacing:-.01em}
+nav .sub{font-size:12.5px;color:#9db0bc;margin-top:6px}
+.acct{display:flex;flex-direction:column;gap:6px}
+.acct button{font:500 14px var(--body);text-align:left;color:#cfdae1;background:transparent;border:1px solid #33454f;border-radius:8px;padding:9px 12px;cursor:pointer}
+.acct button.on{background:#fff;color:var(--ink);border-color:#fff}
+.acct small{display:block;font-weight:400;color:inherit;opacity:.7}
+.toc{display:flex;flex-direction:column;gap:2px}
+.toc a{text-decoration:none;color:#cfdae1;padding:8px 10px;border-radius:6px;font-size:14px}
+.toc a:hover{background:#243642}
+.livebox{margin-top:auto;font-size:12.5px;color:#9db0bc;line-height:1.5}
+.livebox b{color:#e8eef2;font-weight:600}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#7a8a94;margin-right:7px}.dot.on{background:#3ecf8e}
+/* main */
+main{padding:34px clamp(18px,4vw,56px) 80px;max-width:1080px}
+.top h2{font:700 34px/1.1 var(--head);letter-spacing:-.02em;margin:0 0 6px}
+.top p{margin:0;color:var(--mute);max-width:62ch}
+section{margin-top:54px;scroll-margin-top:20px}
+section>h3{font:700 22px/1.2 var(--head);letter-spacing:-.01em;margin:0}
+section>.ask{color:var(--mute);margin:4px 0 18px;max-width:64ch}
+h4{font:600 14px var(--body);margin:26px 0 8px;color:var(--ink)}
+.panel{background:var(--panel);border-radius:12px;padding:16px 18px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--panel);border-radius:12px;overflow:hidden}
+th{font:500 12.5px var(--body);color:var(--mute);text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule)}
+td{padding:11px 14px;border-top:1px solid #eef1f3;vertical-align:top}
+tr:first-child td{border-top:0}
+.meta{font-size:13px;color:var(--mute)}.mute{color:var(--mute)}
+.note{font-size:13px;color:var(--mute);margin:8px 0 0;max-width:80ch}
+/* chips */
+.cite{font:500 11px/1 ui-monospace,Menlo,monospace;background:var(--teal-bg);color:var(--teal);border:0;border-radius:4px;padding:3px 6px;margin:1px 2px 1px 0;cursor:pointer}
+.cite:hover{background:#cfe6e4}
+/* status */
+.st{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;white-space:nowrap}
+.st:before{content:"";width:9px;height:9px;border-radius:2px;background:currentColor}
+.backed,.low,.ally,.warm{color:var(--green)}.partial,.medium,.neutral{color:var(--amber)}.unbacked,.high,.guarded{color:var(--red)}
+/* book bar */
+.worth{display:flex;flex-wrap:wrap;gap:6px 36px;align-items:baseline;margin-bottom:16px}
+.worth .n{font:700 52px/1 var(--head);letter-spacing:-.03em}
+.worth .l{color:var(--mute);max-width:40ch}
+.bar{display:flex;height:46px;border-radius:8px;overflow:hidden;background:var(--panel);outline:1px solid var(--rule)}
+.seg{display:flex;align-items:center;padding:0 12px;color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;min-width:0}
+.seg.rec{background:var(--teal)}.seg.exp{background:#0f8d86}.seg.pipe{background:#5bb5ad;color:#06302f}
+.seg.cant{background:repeating-linear-gradient(135deg,#fff 0 6px,#f3c9c3 6px 12px);color:var(--red);outline:1px dashed var(--red);outline-offset:-1px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 22px;margin-top:14px}
+.legend div b{display:block;font:700 20px var(--head)}.legend div span{font-size:13px;color:var(--mute)}
+.flag{border-left:3px solid var(--red);background:var(--red-bg);padding:10px 14px;border-radius:0 8px 8px 0;margin-top:14px}
+/* moves */
+.move{display:grid;grid-template-columns:54px minmax(0,1fr) 150px;gap:6px 18px;padding:18px;background:var(--panel);border-radius:12px;margin-bottom:10px}
+.move .rank{font:700 40px/1 var(--head);color:var(--teal)}
+.move .due{text-align:right}.move .due b{display:block;font:700 18px var(--head)}
+.move.queue{background:transparent;border:1px solid var(--rule);padding:12px 16px}.move.queue .rank{font-size:24px;color:var(--mute)}
+.move h5{font:600 16px/1.3 var(--body);margin:0 0 4px}
+.move ul{margin:6px 0 0 16px;padding:0;color:var(--mute);font-size:13px}
+/* risks */
+tr.sev td:first-child{border-left:4px solid var(--rule)}
+tr.sev.high td:first-child{border-left-color:var(--red)}tr.sev.medium td:first-child{border-left-color:var(--amber)}tr.sev.low td:first-child{border-left-color:var(--green)}
+.spark{font:12px ui-monospace,monospace;letter-spacing:.5px;color:var(--mute)}
+/* drawer */
+#drawer{position:fixed;right:0;top:0;bottom:0;width:min(480px,100%);background:#fff;box-shadow:-10px 0 30px rgba(22,34,44,.18);padding:22px;overflow:auto;transform:translateX(105%);transition:transform .18s;z-index:10}
+#drawer.open{transform:none}
+#drawer pre{white-space:pre-wrap;font:12.5px/1.55 ui-monospace,Menlo,monospace;background:var(--ground);padding:12px;border-radius:8px}
+#drawer .x{float:right;border:0;background:none;font-size:24px;cursor:pointer;color:var(--mute)}
+@media (max-width:860px){body{grid-template-columns:1fr}nav{position:static;height:auto}.toc{flex-direction:row;flex-wrap:wrap}.livebox{margin-top:0}.move{grid-template-columns:40px 1fr}.move .due{grid-column:2;text-align:left}.worth .n{font-size:40px}table{display:block;overflow-x:auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style></head><body>
-<header><div><h1>Account CRM</h1><div class="live" id="live">loading…</div></div><div class="tabs" id="tabs"></div></header>
+<nav>
+ <div><h1>Account CRM</h1><div class="sub">Every number opens its source.</div></div>
+ <div class="acct" id="tabs"></div>
+ <div class="toc">
+  <a href="#q1">1. What the book is worth</a><a href="#q2">2. Who holds the power</a><a href="#q3">3. What to do first</a><a href="#q4">4. What goes wrong next</a><a href="#q5">5. What we don't know</a>
+ </div>
+ <div class="livebox" id="live">loading</div>
+</nav>
 <main id="main">Loading…</main>
-<aside id="drawer"><button class="x" onclick="closeD()">×</button><div id="dbody"></div></aside>
+<aside id="drawer" aria-label="Source"><button class="x" onclick="closeD()" aria-label="Close">×</button><div id="dbody"></div></aside>
 <script>
 let D=null,cur=0;
 const E=(n)=>n==null?"–":"€"+Number(n).toLocaleString("en-GB");
+const K=(n)=>n>=1e6?"€"+(n/1e6).toFixed(2).replace(/\.?0+$/,"")+"M":"€"+Math.round(n/1e3)+"k";
 const esc=(s)=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const chips=(c=[],max=8)=>{const u=[...new Set(c)];return u.slice(0,max).map(i=>`<button class="cite" data-id="${esc(i)}">${esc(i)}</button>`).join("")+(u.length>max?`<span class="mute"> +${u.length-max}</span>`:"")};
-const num=(v,f=E)=>v&&typeof v==="object"?`${f(v.value)} ${chips(v.cites,4)}`:f(v);
-const pill=(t,c)=>`<span class="pill ${c||t}">${esc(t)}</span>`;
-function openD(id){const r=D.refs[id];const b=document.getElementById("dbody");
- b.innerHTML=r?`<div class="mute">${esc(r.type)} · account ${esc(r.account||"–")}</div><h3 style="margin-top:4px">${esc(r.id)}</h3><b>${esc(r.title)}</b><pre>${esc(r.body)}</pre>`:`<b>${esc(id)}</b><p class="mute">No source with this id exists in the data.</p>`;
+const chips=(c=[],max=6)=>{const u=[...new Set(c)];return u.slice(0,max).map(i=>`<button class="cite" data-id="${esc(i)}">${esc(i)}</button>`).join("")+(u.length>max?`<span class="mute"> +${u.length-max}</span>`:"")};
+const num=(v,f=E)=>v&&typeof v==="object"?`${f(v.value)} ${chips(v.cites,3)}`:f(v);
+const st=(t,c)=>`<span class="st ${c||t}">${esc(t)}</span>`;
+function openD(id){const r=D.refs[id],b=document.getElementById("dbody");
+ b.innerHTML=r?`<div class="meta">${esc(r.type)}, account ${esc(r.account||"none")}</div><h4 style="margin-top:6px">${esc(r.id)}</h4><b>${esc(r.title)}</b><pre>${esc(r.body)}</pre>`:`<b>${esc(id)}</b><p class="mute">No source with this id exists in the data.</p>`;
  document.getElementById("drawer").classList.add("open")}
 function closeD(){document.getElementById("drawer").classList.remove("open")}
 document.addEventListener("click",e=>{const t=e.target.closest(".cite");if(t)openD(t.dataset.id)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeD()});
 
 function q1(a){const q=a.q1,t=q.totals;
- const rows=q.lines.map(l=>`<tr><td><b>${esc(l.title)}</b><div class="meta">${esc(l.status)} · ${esc(l.why)}</div></td><td>${l.value?num(l.value):"<span class=mute>not sized</span>"}</td><td>${pill(l.backing)}</td><td>${chips(l.evidence,5)}</td></tr>`).join("");
- return `<div class="kpis">
- <div class="kpi"><small>Recurring revenue, signed and paid</small><span class="big">${E(t.recurring.value)}</span><div>${chips(t.recurring.cites,3)}</div></div>
- <div class="kpi"><small>Closed expansion</small><span class="big">${E(t.closedExpansion.value)}</span><div>${chips(t.closedExpansion.cites,3)}</div></div>
- <div class="kpi"><small>Open pipeline, backed</small><span class="big">${E(t.pipelineBacked.value)}</span><div>${chips(t.pipelineBacked.cites,3)}</div></div>
- <div class="kpi"><small>Renewal at stake (the recurring above)</small><span class="big">${E(t.renewalAtStake.value)}</span><div>${chips(t.renewalAtStake.cites,3)}</div></div></div>
- <h3>Every deal at a backed value</h3><table><tr><th>Deal</th><th>Worth</th><th>Backing</th><th>Evidence</th></tr>${rows}</table>
- <div class="sep"><b>Cannot be backed</b> — partial ${num(t.pipelinePartial)} · unbacked ${num(t.pipelineUnbacked)} · open offers ${num(t.offersOpen)}.
- <div class="note">Kept out of the backed totals until someone verifies them.</div></div>
- <h3>Claims, shown apart from what was verified</h3>
- <div class="sep"><b>${esc(q.story.note)}</b> “${esc(q.story.text)}”</div>
- ${q.claims.map(c=>`<div style="margin-top:8px"><b>${esc(c.said_by)}</b> claimed: “${esc(c.text)}” ${chips([c.claim])}<div class="meta">${c.record.map(r=>`${pill(r.status,r.status==="verified"?"low":"medium")} ${esc(r.text)} ${chips([r.id])}`).join("<br>")}</div></div>`).join("")}
- <h3>What the activity records actually show</h3>
- ${q.activity.map(x=>`<div><b>${esc(x.title)}</b>: ${x.activeCount} of ${x.total} regularly active${x.noDock?`, ${x.noDock} with no dock`:""}. <span class="meta">Months ${esc(x.months.join(", "))}. File ${chips([x.file])}</span>
- <table><tr><th>Entity</th><th>Series</th><th></th></tr>${x.entities.map(e=>`<tr><td>${esc(e.label)}</td><td class="spark">${e.series.join(" · ")}</td><td>${e.active?pill("active","low"):pill("inactive","high")} ${e.noDock?pill("no dock","medium"):""}</td></tr>`).join("")}</table>
- ${(x.quality||[]).map(z=>`<div class="note">Data quality: ${esc(z.text)}</div>`).join("")}</div>`).join("")}
- <h3>Dock usage, last ${q.usage.windowWeeks} weeks</h3><div>${num(q.usage.withFlights,x=>x)} of ${q.usage.docks} docks logged flights. <span class="note">${esc(q.usage.caveat)}</span></div>`}
+ const rec=t.recurring.value,exp=t.closedExpansion.value,pipe=t.pipelineBacked.value;
+ const cant=(t.pipelinePartial.value||0)+(t.pipelineUnbacked.value||0)+(t.offersOpen.value||0);
+ const backed=rec+exp,total=backed+pipe+cant||1,w=v=>(v/total*100).toFixed(2)+"%";
+ const seg=(c,v,l)=>v>0?`<div class="seg ${c}" style="width:${w(v)}" title="${l} ${E(v)}">${v/total>.09?l:""}</div>`:"";
+ const rows=q.lines.map(l=>`<tr><td><b>${esc(l.title)}</b><div class="meta">${esc(l.status)}. ${esc(l.why)}</div></td><td>${l.value?num(l.value):"<span class=mute>not sized</span>"}</td><td>${st(l.backing)}</td><td>${chips(l.evidence,4)}</td></tr>`).join("");
+ return `<div class="worth"><span class="n">${K(backed)}</span><span class="l">backed today: signed and paid revenue ${K(rec)} plus closed expansion ${K(exp)}.${pipe?` A further ${K(pipe)} of open pipeline has evidence behind it.`:""}</span></div>
+ <div class="bar" role="img" aria-label="Book split into backed and not backed">${seg("rec",rec,"Recurring")}${seg("exp",exp,"Closed expansion")}${seg("pipe",pipe,"Backed pipeline")}${seg("cant",cant,"Cannot be backed")}</div>
+ <div class="legend">
+  <div><b>${num(t.recurring,K)}</b><span>Recurring, signed and paid</span></div>
+  <div><b>${num(t.closedExpansion,K)}</b><span>Closed expansion</span></div>
+  <div><b>${num(t.pipelineBacked,K)}</b><span>Open pipeline with evidence</span></div>
+  <div><b>${num(t.renewalAtStake,K)}</b><span>Renewal at stake (already counted in recurring)</span></div>
+ </div>
+ <div class="flag"><b>Cannot be backed:</b> partial ${num(t.pipelinePartial,K)}, unbacked ${num(t.pipelineUnbacked,K)}, open offers ${num(t.offersOpen,K)}. None of this is in the backed figure until someone verifies it.</div>
+ <h4>Every deal and what backs it</h4><table><tr><th>Deal</th><th>Worth</th><th>Backing</th><th>Evidence</th></tr>${rows}</table>
+ <h4>What was claimed and what was verified</h4>
+ <div class="flag"><b>${esc(q.story.note)}</b> “${esc(q.story.text)}”</div>
+ ${q.claims.map(c=>`<div class="panel" style="margin-top:10px"><b>${esc(c.said_by)}</b> claimed: “${esc(c.text)}” ${chips([c.claim])}<div class="meta" style="margin-top:6px">${c.record.map(r=>`${st(r.status,r.status==="verified"?"low":"medium")} ${esc(r.text)} ${chips([r.id])}`).join("<br>")}</div></div>`).join("")}
+ <h4>What the activity records show</h4>
+ ${q.activity.map(x=>`<p style="margin:0 0 8px"><b>${esc(x.title)}:</b> ${x.activeCount} of ${x.total} regularly active${x.noDock?`, ${x.noDock} with no dock`:""}. <span class="meta">Months ${esc(x.months.join(", "))}. File ${chips([x.file])}</span></p>
+ <table><tr><th>Entity</th><th>Flights by month</th><th>Status</th></tr>${x.entities.map(e=>`<tr><td>${esc(e.label)}</td><td class="spark">${e.series.join("  ")}</td><td>${e.active?st("active","low"):st("inactive","high")} ${e.noDock?st("no dock","medium"):""}</td></tr>`).join("")}</table>
+ ${(x.quality||[]).map(z=>`<div class="note">Data quality: ${esc(z.text)}</div>`).join("")}`).join("")}
+ <h4>Dock usage, last ${q.usage.windowWeeks} weeks</h4><p style="margin:0">${num(q.usage.withFlights,x=>x)} of ${q.usage.docks} docks logged flights.</p><div class="note">${esc(q.usage.caveat)}</div>`}
 
 function q2(a){const q=a.q2;
- const person=p=>`<tr><td><b>${esc(p.name)}</b> ${chips([p.id],1)}<div class="meta">${esc(p.role)} · ${pill(p.relationship, p.relationship==="guarded"?"high":p.relationship==="neutral"?"medium":"low")}${p.available?"":" · away"}</div></td>
- <td>${(p.tags||[]).map(t=>`${pill(t.tag,"medium")} ${chips(t.cites,3)}`).join("<br>")||"<span class=mute>no role evidence</span>"}</td>
- <td class="meta">${p.lastContact?`${esc(p.lastContact.date)} — ${esc(p.lastContact.note)} ${chips([p.lastContact.cite])}`:"no contact on file"}${p.signIns?`<br>Last sign-in ${esc(p.signIns.last??"never")} ${chips([p.signIns.cite])}`:""}</td></tr>`;
- return `<div class="note">${esc(q.note)}</div>
- ${q.perDeal.map(d=>`<h3>${esc(d.title)} · ${pill(d.stage,"medium")}</h3>${d.blocker?`<div class="meta">Blocker (${esc(d.blocker.status)}): ${esc(d.blocker.text)}</div>`:""}
- <table><tr><th>Person · where they stand</th><th>Role in this deal (decides / pays / uses / could block)</th><th>Last contact</th></tr>${d.people.map(person).join("")||"<tr><td colspan=3 class=mute>No named person on file for this deal.</td></tr>"}</table>`).join("")}
- <div class="sep"><b>Roles nobody has named</b><ul>${q.notOnFile.map(n=>`<li>${esc(n.text)} ${chips(n.cites,3)}</li>`).join("")}</ul></div>`}
+ const person=p=>`<tr><td><b>${esc(p.name)}</b> ${chips([p.id],1)}<div class="meta">${esc(p.role)}${p.available?"":", away"}</div><div style="margin-top:4px">${st(p.relationship)}</div></td>
+ <td>${(p.tags||[]).map(t=>`<b>${esc(t.tag)}</b> ${chips(t.cites,3)}`).join("<br>")||"<span class=mute>no role evidence</span>"}</td>
+ <td class="meta">${p.lastContact?`${esc(p.lastContact.date)}: ${esc(p.lastContact.note)} ${chips([p.lastContact.cite])}`:"no contact on file"}${p.signIns?`<br>Last sign-in ${esc(p.signIns.last??"never")} ${chips([p.signIns.cite])}`:""}</td></tr>`;
+ return `<div class="note" style="margin-top:0">${esc(q.note)}</div>
+ ${q.perDeal.map(d=>`<h4>${esc(d.title)} <span class="meta">stage ${esc(d.stage)}</span></h4>${d.blocker?`<div class="meta" style="margin-bottom:8px">Blocker (${esc(d.blocker.status)}): ${esc(d.blocker.text)}</div>`:""}
+ <table><tr><th>Person and where they stand</th><th>Role in this deal: decides, pays, uses, could block</th><th>Last contact</th></tr>${d.people.map(person).join("")||"<tr><td colspan=3 class=mute>No named person on file for this deal.</td></tr>"}</table>`).join("")}
+ <div class="flag"><b>Roles nobody has named</b><ul style="margin:6px 0 0 18px;padding:0">${q.notOnFile.map(n=>`<li>${esc(n.text)} ${chips(n.cites,3)}</li>`).join("")}</ul></div>`}
 
 function q3(a){const q=a.q3;
- const mv=m=>`<div class="move"><div class="rank">${m.rank}</div><div><b>${esc(m.title)}</b>
- <div class="meta">Moves: ${esc(m.deal_title)} (${esc(m.deal)}) · worth up to ${m.value?num(m.value):"unsized"} · <b>due ${esc(m.due)}</b></div>
+ const mv=(m,c)=>`<div class="move ${c||""}"><div class="rank">${m.rank}</div><div><h5>${esc(m.title)}</h5>
+ <div class="meta">Moves ${esc(m.deal_title)}, worth up to ${m.value?num(m.value):"an unsized amount"}</div>
  <div class="meta">Owner: ${esc(m.owner.flytbase)}${m.owner.customer?` with ${esc(m.owner.customer.name)} ${chips([m.owner.customer.id])}`:""} ${chips([m.owner.cite])}</div>
- <ul class="meta" style="margin:4px 0 0 16px;padding:0">${m.why.map(w=>`<li>${esc(w)}</li>`).join("")}</ul><div>${chips(m.cites,10)}</div></div></div>`;
- return `<div class="note">${esc(q.rule)}</div>${q.moves.map(mv).join("")}<h3>Then, in the queue</h3>${q.queue.map(mv).join("")||"<div class=mute>Nothing else queued.</div>"}`}
+ <ul>${m.why.map(w=>`<li>${esc(w)}</li>`).join("")}</ul><div style="margin-top:6px">${chips(m.cites,8)}</div></div>
+ <div class="due"><span class="meta">Due</span><b>${esc(m.due)}</b></div></div>`;
+ return `<div class="note" style="margin-top:0">${esc(q.rule)}</div><div style="margin-top:14px">${q.moves.map(m=>mv(m)).join("")}</div>${q.queue.length?`<h4>Next in the queue</h4>${q.queue.map(m=>mv(m,"queue")).join("")}`:""}`}
 
-function q4(a){return `<table><tr><th></th><th>What</th><th>When it turns bad</th><th>Why we think so</th><th>Source</th></tr>${a.q4.risks.map(r=>`<tr><td>${pill(r.severity)}</td><td>${esc(r.what)}</td><td>${esc(r.when)}</td><td class="meta">${esc(r.why)}</td><td>${chips(r.cites,4)}</td></tr>`).join("")}</table>`}
+function q4(a){return `<table><tr><th>What</th><th>When it turns bad</th><th>Why we think so</th><th>Source</th></tr>${a.q4.risks.map(r=>`<tr class="sev ${esc(r.severity)}"><td><b>${esc(r.what)}</b><div style="margin-top:4px">${st(r.severity)}</div></td><td>${esc(r.when)}</td><td class="meta">${esc(r.why)}</td><td>${chips(r.cites,4)}</td></tr>`).join("")}</table>`}
 
-function q5(a){return `<table><tr><th>What we do not know</th><th>Why it matters</th><th>Who could fill it</th><th>Source</th></tr>${a.q5.unknown.map(u=>`<tr><td>${esc(u.what)}</td><td class="meta">${esc(u.why)}</td><td>${u.ask?`${esc(u.ask.name)} ${chips([u.ask.id])}<div class="meta">${esc(u.ask.basis)}</div>`:"<span class=mute>nobody on file</span>"}</td><td>${chips(u.cites,4)}</td></tr>`).join("")}</table>`}
+function q5(a){return `<table><tr><th>What we don't know</th><th>Why it matters</th><th>Who could fill it</th><th>Source</th></tr>${a.q5.unknown.map(u=>`<tr><td><b>${esc(u.what)}</b></td><td class="meta">${esc(u.why)}</td><td>${u.ask?`${esc(u.ask.name)} ${chips([u.ask.id])}<div class="meta">${esc(u.ask.basis)}</div>`:"<span class=mute>nobody on file</span>"}</td><td>${chips(u.cites,4)}</td></tr>`).join("")}</table>`}
 
 function render(){const a=D.accounts[cur];
- document.getElementById("tabs").innerHTML=D.accounts.map((x,i)=>`<button class="${i===cur?"on":""}" onclick="cur=${i};render()">${esc(x.id)} · ${esc(x.name)}</button>`).join("");
+ document.getElementById("tabs").innerHTML=D.accounts.map((x,i)=>`<button class="${i===cur?"on":""}" onclick="cur=${i};render();scrollTo(0,0)">${esc(x.name)}<small>Account ${esc(x.id)}</small></button>`).join("");
  const L=D.live,ago=L.lastPoll?Math.round((Date.now()-Date.parse(L.lastPoll))/1000)+"s ago":"not yet";
- document.getElementById("live").innerHTML=`<span class="dot ${L.tokenConfigured?"on":""}"></span>${L.tokenConfigured?`live · polled ${ago} · ${L.polls} polls · ${L.notesWritten} notes written back · last data change ${L.lastChange?new Date(L.lastChange).toLocaleTimeString():"none yet"}`:"snapshot mode (no token on this server)"}${L.busy?" · "+esc(L.busy):""} · as of ${esc(String(D.asOf).slice(0,10))}`;
- const card=(n,t,sub,body)=>`<section><h2>${n}. ${t}</h2><div class="q">${sub}</div>${body}</section>`;
+ document.getElementById("live").innerHTML=L.tokenConfigured?`<span class="dot on"></span><b>Live</b><br>Last poll ${ago}, ${L.polls} polls<br>${L.notesWritten} notes written back<br>Last data change ${L.lastChange?new Date(L.lastChange).toLocaleTimeString():"none yet"}${L.busy?"<br>"+esc(L.busy):""}`:`<span class="dot"></span><b>Snapshot</b><br>No token on this server`;
+ document.getElementById("live").innerHTML+=`<br>Data as of ${esc(String(D.asOf).slice(0,10))}`;
+ const first=a.q3.moves[0];
  document.getElementById("main").innerHTML=
- card(1,"What is the book worth?","Each deal at a backed value; what cannot be backed is kept apart.",q1(a))+
- card(2,"Who holds the power?","Per deal: who decides, pays, uses and could block, and where each stands.",q2(a))+
- card(3,"What do you do first?","First three moves, ranked, with an owner and a date inside every deadline.",q3(a))+
- card(4,"What is about to go wrong?","Deadlines at risk, people going cold, stuck deals, and when each turns bad.",q4(a))+
- card(5,"What do you still not know?","The gaps the plan rests on, and who could fill each.",q5(a));}
-async function load(){try{const r=await fetch("/api/crm");D=await r.json();render()}catch(e){document.getElementById("main").textContent="Could not load: "+e}}
-load();setInterval(()=>{fetch("/api/crm").then(r=>r.json()).then(d=>{D=d;if(!document.getElementById("drawer").classList.contains("open"))render()})},30000);
+ `<div class="top"><h2>${esc(a.name)}</h2><p>${first?`First move: ${esc(first.title)}, due ${esc(first.due)}.`:""}</p></div>`+
+ `<section id="q1"><h3>1. What the book is worth</h3><p class="ask">Each deal at a value that something backs. What can't be backed is shown apart.</p>${q1(a)}</section>`+
+ `<section id="q2"><h3>2. Who holds the power</h3><p class="ask">For each deal: who decides, who pays, who uses it and who could block it, and where each person stands.</p>${q2(a)}</section>`+
+ `<section id="q3"><h3>3. What to do first</h3><p class="ask">The first three moves, ranked, each with an owner and a date inside every deadline.</p>${q3(a)}</section>`+
+ `<section id="q4"><h3>4. What goes wrong next</h3><p class="ask">Deadlines at risk, people going cold and stuck deals, with the date each turns bad.</p>${q4(a)}</section>`+
+ `<section id="q5"><h3>5. What we don't know</h3><p class="ask">The gaps this plan rests on, and who could fill each one.</p>${q5(a)}</section>`;}
+async function load(){try{const r=await fetch("/api/crm");D=await r.json();render()}catch(e){document.getElementById("main").textContent="Could not load the CRM data: "+e}}
+load();setInterval(()=>{fetch("/api/crm").then(r=>r.json()).then(d=>{D=d;if(!document.getElementById("drawer").classList.contains("open")){const y=scrollY;render();scrollTo(0,y)}}).catch(()=>{})},30000);
 </script></body></html>
