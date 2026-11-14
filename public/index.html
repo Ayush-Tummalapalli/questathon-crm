@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Account CRM: Eastern Counties and Aldermoor</title>
+<meta name="description" content="Live CRM for two accounts: what the book is worth, who holds the power, what to do first, what goes wrong next, and what is unknown. Every number cites its source.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230d2a47%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%276%27 fill=%27%23ff5a13%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -121,7 +123,7 @@ const E=(n)=>n==null?"–":"€"+Number(n).toLocaleString("en-GB");
 const K=(n)=>n>=1e6?"€"+(n/1e6).toFixed(2).replace(/\.?0+$/,"")+"M":"€"+Math.round(n/1e3)+"k";
 const esc=(s)=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const chips=(c=[],max=6)=>{const u=[...new Set(c)];return u.slice(0,max).map(i=>`<button class="cite" data-id="${esc(i)}">${esc(i)}</button>`).join("")+(u.length>max?`<span class="mute"> +${u.length-max}</span>`:"")};
-const num=(v,f=E)=>v&&typeof v==="object"?`${f(v.value)} ${v.value?chips(v.cites,3):""}`:f(v);
+const num=(v,f=E)=>v&&typeof v==="object"?(v.value===0&&f===K?`<span class="mute">none</span>`:`${f(v.value)} ${chips(v.cites,3)}`):f(v);
 const tag=(t,c)=>`<span class="tag ${c||t}">${esc(t)}</span>`;
 const days=(d)=>Math.round((Date.parse(d)-Date.parse(D.asOf))/864e5);
 function openD(id){const r=D.refs[id],b=document.getElementById("dbody");
@@ -142,7 +144,7 @@ function hero(a){const q=a.q1,t=q.totals,first=a.q3.moves[0];
  return `<div class="hero"><div class="wrap">
  <h1>${esc(a.name)}</h1>
  <p class="sub">${first?`First move on Monday: ${esc(first.title)}. Due ${esc(first.due)}.`:""}</p>
- <div class="big"><span class="n">${K(backed)}</span><span class="l">backed today. That is ${K(rec)} of signed and paid recurring revenue plus ${K(exp)} of closed expansion.${pipe?` A further ${K(pipe)} of open pipeline has evidence behind it.`:" No open pipeline has enough evidence behind it yet."}</span></div>
+ <div class="big"><span class="n" title="Recurring plus closed expansion">${K(backed)}</span><span class="l">backed today. That is ${num(t.recurring,K)} of signed and paid recurring revenue plus ${num(t.closedExpansion,K)} of closed expansion.${pipe?` A further ${num(t.pipelineBacked,K)} of open pipeline has evidence behind it.`:" No open pipeline has enough evidence behind it yet."}</span></div>
  <div class="book" role="img" aria-label="Book split into backed and not backed">${seg("b-rec",rec,"Recurring")}${seg("b-exp",exp,"Closed expansion")}${seg("b-pipe",pipe,"Backed pipeline")}${seg("b-cant",cant,"Cannot be backed")}</div>
  <div class="keys">
   <div><b>${num(t.recurring,K)}</b><span>Recurring, signed and paid</span></div>

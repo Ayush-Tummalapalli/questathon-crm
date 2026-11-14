@@ -11,6 +11,7 @@ startLive();
 
 http.createServer((req, res) => {
   const url = new URL(req.url, "http://x");
+  res.setHeader("X-Content-Type-Options", "nosniff"); res.setHeader("Referrer-Policy", "no-referrer");
   const json = (o, code = 200) => { res.writeHead(code, { "content-type": "application/json", "cache-control": "no-store" }); res.end(JSON.stringify(o)); };
   if (url.pathname === "/api/crm") { const c = live.current; return json({ ...c, live: status }); }
   if (url.pathname === "/api/status") return json(status);
