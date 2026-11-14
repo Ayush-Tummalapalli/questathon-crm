@@ -80,10 +80,12 @@ function findAccounts(x, out = []) {
 }
 async function pullNewAccounts() {
   let res;
-  try { res = await callTool("get_new_account"); } catch (e) { say("get_new_account: " + String(e.message).slice(0, 120)); return false; }
+  const once = (k, msg) => { if (state.lastNew !== k) { state.lastNew = k; addFeed("system", msg); } };
+  try { res = await callTool("get_new_account"); }
+  catch (e) { const m = String(e.message).slice(0, 160); say("get_new_account: " + m); once("err:" + m, "get_new_account did not answer: " + m); return false; }
   save("get_new_account", res);
   const found = findAccounts(res).map((a, i) => ({ ...a, id: a.id ?? a.account ?? `N${i + 1}` }));
-  if (!found.length) return false;
+  if (!found.length) { const t = typeof res === "string" ? res : JSON.stringify(res); once("none:" + hash(t), "get_new_account answered with no account I can read: " + t.slice(0, 220)); return false; }
   const prev = existsSync(RAW + "extra_accounts.json") ? JSON.parse(readFileSync(RAW + "extra_accounts.json", "utf8")) : { accounts: [], files: [] };
   const fresh = found.filter((a) => !prev.accounts.some((p) => p.id === a.id));
   const files = [...(prev.files ?? [])];
