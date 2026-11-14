@@ -86,7 +86,7 @@ async function pullNewAccounts() {
   const once = (k, msg) => { if (state.lastNew !== k) { state.lastNew = k; addFeed("system", msg); } };
   // The tool wants an account id ("Missing: account"). The new one is not in get_my_accounts, so try the
   // likely ids: the next letter first, then the names. A working id is remembered.
-  const ids = state.newAcctId ? [state.newAcctId] : (process.env.AQ_NEW_ACCOUNT ? [process.env.AQ_NEW_ACCOUNT] : ["C", "kestrel_estates", "kestrel", "Kestrel Estates", "K"]);
+  const ids = state.newAcctId ? [state.newAcctId] : (process.env.AQ_NEW_ACCOUNT ? [process.env.AQ_NEW_ACCOUNT] : ["K", "C", "kestrel_estates", "kestrel", "Kestrel Estates"]);
   let lastErr = "";
   for (const id of ids) {
     try { res = await callTool("get_new_account", { account: id }); state.newAcctId = id; break; }
