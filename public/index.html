@@ -2,89 +2,106 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Account CRM: Eastern Counties and Aldermoor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--ground:#edf0f2;--panel:#fff;--ink:#16222c;--mute:#5d6b76;--rule:#d5dbe0;--teal:#0a6b6b;--teal-bg:#e3f1f0;--amber:#b26a00;--amber-bg:#fbf0dc;--red:#b8362a;--red-bg:#fbe9e6;--green:#1d7a52;
- --head:"Bricolage Grotesque",system-ui,sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif}
+:root{--sky:#e4eef6;--sky2:#d3e2ee;--paper:#fff;--navy:#0d2a47;--navy2:#143a5e;--ink:#0d2a47;--mute:#587089;--rule:#c5d6e4;--hv:#ff5a13;--hv-bg:#fff0e8;--green:#12805c;--green-bg:#e3f5ee;--amber:#a86500;--amber-bg:#fff3d9;--red:#c0372b;--red-bg:#fdebe8;
+ --disp:"Archivo",system-ui,sans-serif;--body:"Hanken Grotesk",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font:15px/1.55 var(--body);color:var(--ink);background:var(--ground);display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh;font-variant-numeric:tabular-nums}
-a{color:inherit}
-:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
-/* rail */
-nav{position:sticky;top:0;height:100vh;padding:26px 22px;background:var(--ink);color:#e8eef2;display:flex;flex-direction:column;gap:26px}
-nav h1{font:700 20px/1.15 var(--head);margin:0;letter-spacing:-.01em}
-nav .sub{font-size:12.5px;color:#9db0bc;margin-top:6px}
-.acct{display:flex;flex-direction:column;gap:6px}
-.acct button{font:500 14px var(--body);text-align:left;color:#cfdae1;background:transparent;border:1px solid #33454f;border-radius:8px;padding:9px 12px;cursor:pointer}
-.acct button.on{background:#fff;color:var(--ink);border-color:#fff}
-.acct small{display:block;font-weight:400;color:inherit;opacity:.7}
-.toc{display:flex;flex-direction:column;gap:2px}
-.toc a{text-decoration:none;color:#cfdae1;padding:8px 10px;border-radius:6px;font-size:14px}
-.toc a:hover{background:#243642}
-.livebox{margin-top:auto;font-size:12.5px;color:#9db0bc;line-height:1.5}
-.livebox b{color:#e8eef2;font-weight:600}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#7a8a94;margin-right:7px}.dot.on{background:#3ecf8e}
-/* main */
-main{padding:34px clamp(18px,4vw,56px) 80px;max-width:1080px}
-.top h2{font:700 34px/1.1 var(--head);letter-spacing:-.02em;margin:0 0 6px}
-.top p{margin:0;color:var(--mute);max-width:62ch}
-section{margin-top:54px;scroll-margin-top:20px}
-section>h3{font:700 22px/1.2 var(--head);letter-spacing:-.01em;margin:0}
-section>.ask{color:var(--mute);margin:4px 0 18px;max-width:64ch}
-h4{font:600 14px var(--body);margin:26px 0 8px;color:var(--ink)}
-.panel{background:var(--panel);border-radius:12px;padding:16px 18px}
-table{border-collapse:collapse;width:100%;font-size:14px;background:var(--panel);border-radius:12px;overflow:hidden}
-th{font:500 12.5px var(--body);color:var(--mute);text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule)}
-td{padding:11px 14px;border-top:1px solid #eef1f3;vertical-align:top}
-tr:first-child td{border-top:0}
-.meta{font-size:13px;color:var(--mute)}.mute{color:var(--mute)}
-.note{font-size:13px;color:var(--mute);margin:8px 0 0;max-width:80ch}
-/* chips */
-.cite{font:500 11px/1 ui-monospace,Menlo,monospace;background:var(--teal-bg);color:var(--teal);border:0;border-radius:4px;padding:3px 6px;margin:1px 2px 1px 0;cursor:pointer}
-.cite:hover{background:#cfe6e4}
-/* status */
-.st{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;white-space:nowrap}
-.st:before{content:"";width:9px;height:9px;border-radius:2px;background:currentColor}
-.backed,.low,.ally,.warm{color:var(--green)}.partial,.medium,.neutral{color:var(--amber)}.unbacked,.high,.guarded{color:var(--red)}
-/* book bar */
-.worth{display:flex;flex-wrap:wrap;gap:6px 36px;align-items:baseline;margin-bottom:16px}
-.worth .n{font:700 52px/1 var(--head);letter-spacing:-.03em}
-.worth .l{color:var(--mute);max-width:40ch}
-.bar{display:flex;height:46px;border-radius:8px;overflow:hidden;background:var(--panel);outline:1px solid var(--rule)}
-.seg{display:flex;align-items:center;padding:0 12px;color:#fff;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;min-width:0}
-.seg.rec{background:var(--teal)}.seg.exp{background:#0f8d86}.seg.pipe{background:#5bb5ad;color:#06302f}
-.seg.cant{background:repeating-linear-gradient(135deg,#fff 0 6px,#f3c9c3 6px 12px);color:var(--red);outline:1px dashed var(--red);outline-offset:-1px}
-.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 22px;margin-top:14px}
-.legend div b{display:block;font:700 20px var(--head)}.legend div span{font-size:13px;color:var(--mute)}
-.flag{border-left:3px solid var(--red);background:var(--red-bg);padding:10px 14px;border-radius:0 8px 8px 0;margin-top:14px}
-/* moves */
-.move{display:grid;grid-template-columns:54px minmax(0,1fr) 150px;gap:6px 18px;padding:18px;background:var(--panel);border-radius:12px;margin-bottom:10px}
-.move .rank{font:700 40px/1 var(--head);color:var(--teal)}
-.move .due{text-align:right}.move .due b{display:block;font:700 18px var(--head)}
-.move.queue{background:transparent;border:1px solid var(--rule);padding:12px 16px}.move.queue .rank{font-size:24px;color:var(--mute)}
-.move h5{font:600 16px/1.3 var(--body);margin:0 0 4px}
-.move ul{margin:6px 0 0 16px;padding:0;color:var(--mute);font-size:13px}
-/* risks */
-tr.sev td:first-child{border-left:4px solid var(--rule)}
-tr.sev.high td:first-child{border-left-color:var(--red)}tr.sev.medium td:first-child{border-left-color:var(--amber)}tr.sev.low td:first-child{border-left-color:var(--green)}
-.spark{font:12px ui-monospace,monospace;letter-spacing:.5px;color:var(--mute)}
+body{margin:0;font:15px/1.55 var(--body);color:var(--ink);background:var(--sky);font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--hv);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 clamp(16px,3vw,36px)}
+/* top bar */
+.bar{position:sticky;top:0;z-index:6;background:rgba(13,42,71,.97);backdrop-filter:blur(6px);color:#fff}
+.bar .wrap{display:flex;align-items:center;gap:18px;height:58px}
+.logo{font:800 17px var(--disp);font-stretch:112%;letter-spacing:-.01em;white-space:nowrap}
+.logo i{display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--hv);margin-right:9px;box-shadow:0 0 0 4px rgba(255,90,19,.28)}
+.seg{display:flex;background:#0a2038;border-radius:999px;padding:3px}
+.seg button{font:600 13px var(--body);border:0;background:transparent;color:#a9c0d6;padding:7px 16px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:#fff;color:var(--navy)}
+.jump{margin-left:auto;display:flex;gap:2px}.jump a{color:#a9c0d6;text-decoration:none;font-size:13px;padding:6px 10px;border-radius:6px}.jump a:hover{background:#1a4167;color:#fff}
+.pulse{font:500 12px var(--mono);color:#a9c0d6;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.pulse i{width:8px;height:8px;border-radius:50%;background:#6f88a0}.pulse.on i{background:#3be08f;box-shadow:0 0 0 0 rgba(59,224,143,.6);animation:p 2.4s infinite}
+@keyframes p{70%{box-shadow:0 0 0 8px rgba(59,224,143,0)}100%{box-shadow:0 0 0 0 rgba(59,224,143,0)}}
+/* hero */
+.hero{background:linear-gradient(180deg,var(--navy) 0,var(--navy2) 100%);color:#fff;padding:44px 0 40px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 0,rgba(255,90,19,.18),transparent 45%),repeating-linear-gradient(0deg,transparent 0 47px,rgba(255,255,255,.035) 47px 48px);pointer-events:none}
+.hero .wrap{position:relative;z-index:1}
+.hero h1{font:800 clamp(30px,5vw,54px)/1.02 var(--disp);font-stretch:112%;letter-spacing:-.025em;margin:0}
+.hero .sub{color:#a9c0d6;margin:10px 0 0;max-width:60ch}
+.big{display:flex;flex-wrap:wrap;gap:8px 40px;align-items:flex-end;margin:30px 0 18px}
+.big .n{font:800 clamp(52px,9vw,104px)/.9 var(--disp);font-stretch:118%;letter-spacing:-.04em}
+.big .l{max-width:44ch;color:#c4d6e6;font-size:16px;padding-bottom:6px}
+.book{display:flex;height:54px;border-radius:10px;overflow:hidden;background:#0a2038}
+.book>div{display:flex;align-items:center;padding:0 14px;font:600 13px var(--body);white-space:nowrap;overflow:hidden;min-width:0}
+.b-rec{background:#2f9bf0;color:#04213d}.b-exp{background:#7cc2f7;color:#04213d}.b-pipe{background:#c9e6fb;color:#04213d}
+.b-cant{background:repeating-linear-gradient(135deg,#0d2a47 0 7px,#ff5a13 7px 10px);color:#fff;text-shadow:0 1px 2px #000}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px 30px;margin-top:18px}
+.keys b{display:block;font:700 24px var(--disp);font-stretch:108%}.keys span{font-size:13px;color:#a9c0d6}
+.hero .cite{background:rgba(255,255,255,.14);color:#e6f1fb}.hero .cite:hover{background:rgba(255,255,255,.26)}
+/* sections */
+section{padding:56px 0 6px;scroll-margin-top:60px}
+section>.wrap>h2{font:800 clamp(24px,3.4vw,34px)/1.08 var(--disp);font-stretch:108%;letter-spacing:-.02em;margin:0}
+.ask{color:var(--mute);margin:6px 0 20px;max-width:66ch}
+h4{font:700 15px var(--body);margin:30px 0 10px}
+.card{background:var(--paper);border-radius:14px;padding:18px 20px;box-shadow:0 1px 0 var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--paper);border-radius:14px;overflow:hidden;box-shadow:0 1px 0 var(--rule)}
+th{font:600 12.5px var(--body);color:var(--mute);text-align:left;padding:11px 16px;background:#f3f8fc;border-bottom:1px solid var(--rule)}
+td{padding:13px 16px;border-top:1px solid #e9f0f6;vertical-align:top}tr:first-child td{border-top:0}
+.meta{font-size:13px;color:var(--mute)}.mute{color:var(--mute)}.note{font-size:13px;color:var(--mute);margin:10px 0 0;max-width:84ch}
+.cite{font:500 11px/1 var(--mono);background:#e6f0fa;color:#1d5fa6;border:0;border-radius:5px;padding:4px 6px;margin:1px 2px 1px 0;cursor:pointer}.cite:hover{background:#cfe3f6}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;border-radius:999px;padding:3px 10px 3px 8px;white-space:nowrap}
+.tag:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.backed,.low,.ally,.warm,.verified{color:var(--green);background:var(--green-bg)}
+.partial,.medium,.neutral,.told{color:var(--amber);background:var(--amber-bg)}
+.unbacked,.high,.guarded,.claim{color:var(--red);background:var(--red-bg)}
+.flag{border-left:4px solid var(--hv);background:var(--hv-bg);padding:12px 16px;border-radius:0 12px 12px 0;margin-top:16px}
+.claimbox{background:var(--paper);border-radius:14px;padding:14px 18px;margin-top:10px;border-left:4px solid var(--red)}
+/* activity bars */
+.spark{display:flex;align-items:flex-end;gap:3px;height:34px}.spark i{display:block;width:12px;background:var(--navy2);border-radius:2px 2px 0 0;min-height:2px}.spark i.z{background:#c5d6e4}
+.spark+.meta{margin-top:2px}
+/* departures board */
+.board{background:var(--navy);color:#fff;border-radius:16px;padding:6px 0;overflow:hidden;box-shadow:0 14px 30px -14px rgba(13,42,71,.6)}
+.board .hd,.board .row{display:grid;grid-template-columns:58px minmax(0,1fr) 190px 150px;gap:6px 20px;padding:18px 24px}
+.board .hd{font:500 11.5px var(--mono);color:#7e98b1;padding-bottom:6px;letter-spacing:.04em;text-transform:none}
+.board .row{border-top:1px solid #1d4468}
+.board .rk{font:800 44px/1 var(--disp);font-stretch:118%;color:#fff}
+.board .row:first-of-type .rk{color:var(--hv)}
+.board h5{font:600 17px/1.3 var(--body);margin:0 0 4px}
+.board .meta{color:#a9c0d6}.board ul{margin:6px 0 0 16px;padding:0;color:#a9c0d6;font-size:13px}
+.board .who{font-size:13.5px}.board .who b{display:block;color:#fff}
+.board .due{text-align:right}.board .due b{display:block;font:700 22px var(--mono);color:var(--hv)}.board .due span{font:500 12px var(--mono);color:#a9c0d6}
+.board .cite{background:#1d4468;color:#bcd8f2}.board .cite:hover{background:#2a5a86}
+.board .worth{font:700 14px var(--mono);color:#7cc2f7}
+.queue .row{opacity:.82}.queue .rk{font-size:30px!important;color:#7e98b1!important}
+/* timeline */
+.tl{position:relative;background:var(--paper);border-radius:14px;padding:18px 20px 12px;box-shadow:0 1px 0 var(--rule);margin-bottom:14px;overflow:hidden}
+.tl .axis{position:relative;height:150px;margin:0 10px}
+.tl .line{position:absolute;left:0;right:0;top:75px;height:3px;background:var(--rule);border-radius:2px}
+.tl .today{position:absolute;top:60px;left:0;font:700 11px var(--mono);color:var(--navy)}
+.tl .pin{position:absolute;width:0;transform:translateX(-50%)}
+.tl .pin:before{content:"";position:absolute;left:-6px;top:69px;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid #fff;box-shadow:0 0 0 1px var(--red)}
+.tl .pin.mv:before{background:var(--hv);box-shadow:0 0 0 1px var(--hv)}
+.tl .pin span{position:absolute;white-space:nowrap;font-size:11.5px;line-height:1.25;transform:translateX(-50%);text-align:center;color:var(--ink)}
+.tl .pin span b{display:block;font:700 11px var(--mono)}
+.legend{display:flex;gap:18px;font-size:12.5px;color:var(--mute);margin-top:4px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+/* risk rows */
+tr.sev td:first-child{border-left:5px solid var(--rule)}tr.s-high td:first-child{border-left-color:var(--red)}tr.s-medium td:first-child{border-left-color:var(--hv)}tr.s-low td:first-child{border-left-color:var(--green)}
 /* drawer */
-#drawer{position:fixed;right:0;top:0;bottom:0;width:min(480px,100%);background:#fff;box-shadow:-10px 0 30px rgba(22,34,44,.18);padding:22px;overflow:auto;transform:translateX(105%);transition:transform .18s;z-index:10}
+#drawer{position:fixed;right:0;top:0;bottom:0;width:min(500px,100%);background:#fff;box-shadow:-12px 0 36px rgba(13,42,71,.3);padding:24px;overflow:auto;transform:translateX(105%);transition:transform .2s;z-index:20}
 #drawer.open{transform:none}
-#drawer pre{white-space:pre-wrap;font:12.5px/1.55 ui-monospace,Menlo,monospace;background:var(--ground);padding:12px;border-radius:8px}
-#drawer .x{float:right;border:0;background:none;font-size:24px;cursor:pointer;color:var(--mute)}
-@media (max-width:860px){body{grid-template-columns:1fr}nav{position:static;height:auto}.toc{flex-direction:row;flex-wrap:wrap}.livebox{margin-top:0}.move{grid-template-columns:40px 1fr}.move .due{grid-column:2;text-align:left}.worth .n{font-size:40px}table{display:block;overflow-x:auto}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+#drawer pre{white-space:pre-wrap;font:12.5px/1.55 var(--mono);background:var(--sky);padding:14px;border-radius:10px}
+#drawer .x{float:right;border:0;background:none;font-size:26px;cursor:pointer;color:var(--mute)}
+footer{padding:50px 0 70px;color:var(--mute);font-size:13px}
+@media (max-width:900px){.jump{display:none}.board .hd{display:none}.board .row{grid-template-columns:44px 1fr}.board .who,.board .due{grid-column:2;text-align:left}table{display:block;overflow-x:auto}.pulse{display:none}.bar .wrap{gap:10px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style></head><body>
-<nav>
- <div><h1>Account CRM</h1><div class="sub">Every number opens its source.</div></div>
- <div class="acct" id="tabs"></div>
- <div class="toc">
-  <a href="#q1">1. What the book is worth</a><a href="#q2">2. Who holds the power</a><a href="#q3">3. What to do first</a><a href="#q4">4. What goes wrong next</a><a href="#q5">5. What we don't know</a>
- </div>
- <div class="livebox" id="live">loading</div>
-</nav>
-<main id="main">Loading…</main>
+<header class="bar"><div class="wrap">
+ <div class="logo"><i></i>Account CRM</div>
+ <div class="seg" id="tabs"></div>
+ <nav class="jump"><a href="#q1">Worth</a><a href="#q2">Power</a><a href="#q3">First moves</a><a href="#q4">Risks</a><a href="#q5">Unknowns</a></nav>
+ <div class="pulse" id="live"></div>
+</div></header>
+<div id="app">Loading…</div>
 <aside id="drawer" aria-label="Source"><button class="x" onclick="closeD()" aria-label="Close">×</button><div id="dbody"></div></aside>
 <script>
 let D=null,cur=0;
@@ -92,74 +109,95 @@ const E=(n)=>n==null?"–":"€"+Number(n).toLocaleString("en-GB");
 const K=(n)=>n>=1e6?"€"+(n/1e6).toFixed(2).replace(/\.?0+$/,"")+"M":"€"+Math.round(n/1e3)+"k";
 const esc=(s)=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const chips=(c=[],max=6)=>{const u=[...new Set(c)];return u.slice(0,max).map(i=>`<button class="cite" data-id="${esc(i)}">${esc(i)}</button>`).join("")+(u.length>max?`<span class="mute"> +${u.length-max}</span>`:"")};
-const num=(v,f=E)=>v&&typeof v==="object"?`${f(v.value)} ${chips(v.cites,3)}`:f(v);
-const st=(t,c)=>`<span class="st ${c||t}">${esc(t)}</span>`;
+const num=(v,f=E)=>v&&typeof v==="object"?`${f(v.value)} ${v.value?chips(v.cites,3):""}`:f(v);
+const tag=(t,c)=>`<span class="tag ${c||t}">${esc(t)}</span>`;
+const days=(d)=>Math.round((Date.parse(d)-Date.parse(D.asOf))/864e5);
 function openD(id){const r=D.refs[id],b=document.getElementById("dbody");
- b.innerHTML=r?`<div class="meta">${esc(r.type)}, account ${esc(r.account||"none")}</div><h4 style="margin-top:6px">${esc(r.id)}</h4><b>${esc(r.title)}</b><pre>${esc(r.body)}</pre>`:`<b>${esc(id)}</b><p class="mute">No source with this id exists in the data.</p>`;
+ b.innerHTML=r?`<div class="meta">${esc(r.type)}, account ${esc(r.account||"none")}</div><h4 style="margin-top:8px">${esc(r.id)}</h4><b>${esc(r.title)}</b><pre>${esc(r.body)}</pre>`:`<b>${esc(id)}</b><p class="mute">No source with this id exists in the data.</p>`;
  document.getElementById("drawer").classList.add("open")}
 function closeD(){document.getElementById("drawer").classList.remove("open")}
 document.addEventListener("click",e=>{const t=e.target.closest(".cite");if(t)openD(t.dataset.id)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeD()});
 
-function q1(a){const q=a.q1,t=q.totals;
+function hero(a){const q=a.q1,t=q.totals,first=a.q3.moves[0];
  const rec=t.recurring.value,exp=t.closedExpansion.value,pipe=t.pipelineBacked.value;
  const cant=(t.pipelinePartial.value||0)+(t.pipelineUnbacked.value||0)+(t.offersOpen.value||0);
  const backed=rec+exp,total=backed+pipe+cant||1,w=v=>(v/total*100).toFixed(2)+"%";
- const seg=(c,v,l)=>v>0?`<div class="seg ${c}" style="width:${w(v)}" title="${l} ${E(v)}">${v/total>.09?l:""}</div>`:"";
- const rows=q.lines.map(l=>`<tr><td><b>${esc(l.title)}</b><div class="meta">${esc(l.status)}. ${esc(l.why)}</div></td><td>${l.value?num(l.value):"<span class=mute>not sized</span>"}</td><td>${st(l.backing)}</td><td>${chips(l.evidence,4)}</td></tr>`).join("");
- return `<div class="worth"><span class="n">${K(backed)}</span><span class="l">backed today: signed and paid revenue ${K(rec)} plus closed expansion ${K(exp)}.${pipe?` A further ${K(pipe)} of open pipeline has evidence behind it.`:""}</span></div>
- <div class="bar" role="img" aria-label="Book split into backed and not backed">${seg("rec",rec,"Recurring")}${seg("exp",exp,"Closed expansion")}${seg("pipe",pipe,"Backed pipeline")}${seg("cant",cant,"Cannot be backed")}</div>
- <div class="legend">
+ const seg=(c,v,l)=>v>0?`<div class="${c}" style="width:${w(v)}" title="${l} ${E(v)}">${v/total>.1?l:""}</div>`:"";
+ return `<div class="hero"><div class="wrap">
+ <h1>${esc(a.name)}</h1>
+ <p class="sub">${first?`First move on Monday: ${esc(first.title)}. Due ${esc(first.due)}.`:""}</p>
+ <div class="big"><span class="n">${K(backed)}</span><span class="l">backed today. That is ${K(rec)} of signed and paid recurring revenue plus ${K(exp)} of closed expansion.${pipe?` A further ${K(pipe)} of open pipeline has evidence behind it.`:" No open pipeline has enough evidence behind it yet."}</span></div>
+ <div class="book" role="img" aria-label="Book split into backed and not backed">${seg("b-rec",rec,"Recurring")}${seg("b-exp",exp,"Closed expansion")}${seg("b-pipe",pipe,"Backed pipeline")}${seg("b-cant",cant,"Cannot be backed")}</div>
+ <div class="keys">
   <div><b>${num(t.recurring,K)}</b><span>Recurring, signed and paid</span></div>
   <div><b>${num(t.closedExpansion,K)}</b><span>Closed expansion</span></div>
   <div><b>${num(t.pipelineBacked,K)}</b><span>Open pipeline with evidence</span></div>
-  <div><b>${num(t.renewalAtStake,K)}</b><span>Renewal at stake (already counted in recurring)</span></div>
- </div>
- <div class="flag"><b>Cannot be backed:</b> partial ${num(t.pipelinePartial,K)}, unbacked ${num(t.pipelineUnbacked,K)}, open offers ${num(t.offersOpen,K)}. None of this is in the backed figure until someone verifies it.</div>
- <h4>Every deal and what backs it</h4><table><tr><th>Deal</th><th>Worth</th><th>Backing</th><th>Evidence</th></tr>${rows}</table>
+  <div><b>${num(t.renewalAtStake,K)}</b><span>Renewal at stake, already inside recurring</span></div>
+  <div><b>${num({value:cant,cites:[...t.pipelinePartial.cites,...t.pipelineUnbacked.cites,...t.offersOpen.cites]},K)}</b><span>Cannot be backed: hatched in the bar</span></div>
+ </div></div></div>`}
+
+function q1(a){const q=a.q1;
+ const rows=q.lines.map(l=>`<tr><td><b>${esc(l.title)}</b><div class="meta">${esc(l.status)}. ${esc(l.why)}</div></td><td>${l.value?num(l.value):"<span class=mute>not sized</span>"}</td><td>${tag(l.backing)}</td><td>${chips((l.evidence||[]).map(e=>e.id||e),4)}</td></tr>`).join("");
+ return `<h4 style="margin-top:0">Every deal and what backs it</h4><table><tr><th>Deal</th><th>Worth</th><th>Backing</th><th>Evidence</th></tr>${rows}</table>
  <h4>What was claimed and what was verified</h4>
  <div class="flag"><b>${esc(q.story.note)}</b> “${esc(q.story.text)}”</div>
- ${q.claims.map(c=>`<div class="panel" style="margin-top:10px"><b>${esc(c.said_by)}</b> claimed: “${esc(c.text)}” ${chips([c.claim])}<div class="meta" style="margin-top:6px">${c.record.map(r=>`${st(r.status,r.status==="verified"?"low":"medium")} ${esc(r.text)} ${chips([r.id])}`).join("<br>")}</div></div>`).join("")}
+ ${q.claims.map(c=>`<div class="claimbox"><b>${esc(c.said_by)}</b> claimed: “${esc(c.text)}” ${chips([c.claim])}<div class="meta" style="margin-top:8px">${c.record.map(r=>`${tag(r.status)} ${esc(r.text)} ${chips([r.id])}`).join("<br>")}</div></div>`).join("")}
  <h4>What the activity records show</h4>
- ${q.activity.map(x=>`<p style="margin:0 0 8px"><b>${esc(x.title)}:</b> ${x.activeCount} of ${x.total} regularly active${x.noDock?`, ${x.noDock} with no dock`:""}. <span class="meta">Months ${esc(x.months.join(", "))}. File ${chips([x.file])}</span></p>
- <table><tr><th>Entity</th><th>Flights by month</th><th>Status</th></tr>${x.entities.map(e=>`<tr><td>${esc(e.label)}</td><td class="spark">${e.series.join("  ")}</td><td>${e.active?st("active","low"):st("inactive","high")} ${e.noDock?st("no dock","medium"):""}</td></tr>`).join("")}</table>
- ${(x.quality||[]).map(z=>`<div class="note">Data quality: ${esc(z.text)}</div>`).join("")}`).join("")}
+ ${q.activity.map(x=>{const mx=Math.max(1,...x.entities.flatMap(e=>e.series.map(Number).filter(Number.isFinite)));
+ return `<p style="margin:0 0 10px"><b>${esc(x.title)}:</b> ${x.activeCount} of ${x.total} regularly active${x.noDock?`, ${x.noDock} with no dock`:""}. <span class="meta">Months ${esc(x.months.join(", "))}. File ${chips([x.file])}</span></p>
+ <table><tr><th>Entity</th><th>Flights by month</th><th>Status</th></tr>${x.entities.map(e=>`<tr><td><b>${esc(e.label)}</b></td><td><div class="spark">${e.series.map(v=>`<i class="${Number(v)>0?"":"z"}" style="height:${Math.max(2,Math.round(Number(v)/mx*34))}px" title="${esc(v)}"></i>`).join("")}</div><div class="meta">${e.series.join(", ")}</div></td><td>${e.active?tag("active","low"):tag("inactive","high")} ${e.noDock?tag("no dock","medium"):""}</td></tr>`).join("")}</table>
+ ${(x.quality||[]).map(z=>`<div class="note">Data quality: ${esc(z.text)}</div>`).join("")}`}).join("")}
  <h4>Dock usage, last ${q.usage.windowWeeks} weeks</h4><p style="margin:0">${num(q.usage.withFlights,x=>x)} of ${q.usage.docks} docks logged flights.</p><div class="note">${esc(q.usage.caveat)}</div>`}
 
 function q2(a){const q=a.q2;
- const person=p=>`<tr><td><b>${esc(p.name)}</b> ${chips([p.id],1)}<div class="meta">${esc(p.role)}${p.available?"":", away"}</div><div style="margin-top:4px">${st(p.relationship)}</div></td>
+ const person=p=>`<tr><td><b>${esc(p.name)}</b> ${chips([p.id],1)}<div class="meta">${esc(p.role)}${p.available?"":", away"}</div><div style="margin-top:6px">${tag(p.relationship)}</div></td>
  <td>${(p.tags||[]).map(t=>`<b>${esc(t.tag)}</b> ${chips(t.cites,3)}`).join("<br>")||"<span class=mute>no role evidence</span>"}</td>
  <td class="meta">${p.lastContact?`${esc(p.lastContact.date)}: ${esc(p.lastContact.note)} ${chips([p.lastContact.cite])}`:"no contact on file"}${p.signIns?`<br>Last sign-in ${esc(p.signIns.last??"never")} ${chips([p.signIns.cite])}`:""}</td></tr>`;
- return `<div class="note" style="margin-top:0">${esc(q.note)}</div>
+ return `<div class="note" style="margin:0 0 6px">${esc(q.note)}</div>
  ${q.perDeal.map(d=>`<h4>${esc(d.title)} <span class="meta">stage ${esc(d.stage)}</span></h4>${d.blocker?`<div class="meta" style="margin-bottom:8px">Blocker (${esc(d.blocker.status)}): ${esc(d.blocker.text)}</div>`:""}
  <table><tr><th>Person and where they stand</th><th>Role in this deal: decides, pays, uses, could block</th><th>Last contact</th></tr>${d.people.map(person).join("")||"<tr><td colspan=3 class=mute>No named person on file for this deal.</td></tr>"}</table>`).join("")}
  <div class="flag"><b>Roles nobody has named</b><ul style="margin:6px 0 0 18px;padding:0">${q.notOnFile.map(n=>`<li>${esc(n.text)} ${chips(n.cites,3)}</li>`).join("")}</ul></div>`}
 
 function q3(a){const q=a.q3;
- const mv=(m,c)=>`<div class="move ${c||""}"><div class="rank">${m.rank}</div><div><h5>${esc(m.title)}</h5>
- <div class="meta">Moves ${esc(m.deal_title)}, worth up to ${m.value?num(m.value):"an unsized amount"}</div>
- <div class="meta">Owner: ${esc(m.owner.flytbase)}${m.owner.customer?` with ${esc(m.owner.customer.name)} ${chips([m.owner.customer.id])}`:""} ${chips([m.owner.cite])}</div>
- <ul>${m.why.map(w=>`<li>${esc(w)}</li>`).join("")}</ul><div style="margin-top:6px">${chips(m.cites,8)}</div></div>
- <div class="due"><span class="meta">Due</span><b>${esc(m.due)}</b></div></div>`;
- return `<div class="note" style="margin-top:0">${esc(q.rule)}</div><div style="margin-top:14px">${q.moves.map(m=>mv(m)).join("")}</div>${q.queue.length?`<h4>Next in the queue</h4>${q.queue.map(m=>mv(m,"queue")).join("")}`:""}`}
+ const row=m=>`<div class="row"><div class="rk">${m.rank}</div><div><h5>${esc(m.title)}</h5>
+ <div class="meta">Moves ${esc(m.deal_title)}</div><ul>${m.why.map(w=>`<li>${esc(w)}</li>`).join("")}</ul><div style="margin-top:8px">${chips(m.cites,8)}</div></div>
+ <div class="who"><span class="meta">Owner</span><b>${esc(m.owner.flytbase)}</b>${m.owner.customer?`<span class="meta">with</span> ${esc(m.owner.customer.name)} ${chips([m.owner.customer.id])}`:""}<div class="worth" style="margin-top:8px">${m.value?num(m.value,K):"unsized"}</div></div>
+ <div class="due"><span>due</span><b>${esc(m.due)}</b><span>in ${days(m.due)} days</span></div></div>`;
+ const head=`<div class="hd"><div>RANK</div><div>MOVE</div><div>OWNER AND WORTH</div><div style="text-align:right">DATE</div></div>`;
+ return `<div class="note" style="margin:0 0 14px">${esc(q.rule)}</div>
+ <div class="board">${head}${q.moves.map(row).join("")}</div>
+ ${q.queue.length?`<h4>Next in the queue</h4><div class="board queue">${q.queue.map(row).join("")}</div>`:""}`}
 
-function q4(a){return `<table><tr><th>What</th><th>When it turns bad</th><th>Why we think so</th><th>Source</th></tr>${a.q4.risks.map(r=>`<tr class="sev ${esc(r.severity)}"><td><b>${esc(r.what)}</b><div style="margin-top:4px">${st(r.severity)}</div></td><td>${esc(r.when)}</td><td class="meta">${esc(r.why)}</td><td>${chips(r.cites,4)}</td></tr>`).join("")}</table>`}
+function timeline(a){const items=[];
+ a.q3.moves.forEach(m=>items.push({d:m.due,l:`Move ${m.rank}`,s:m.title,k:"mv"}));
+ a.q4.risks.forEach(r=>{const m=String(r.when).match(/\d{4}-\d{2}-\d{2}/);if(m)items.push({d:m[0],l:m[0].slice(5),s:r.what,k:"rk"})});
+ const dd=items.map(i=>({...i,n:days(i.d)})).filter(i=>i.n>=0).sort((x,y)=>x.n-y.n);
+ if(!dd.length)return"";const span=Math.max(14,dd[dd.length-1].n)*1.04;
+ const pins=dd.map((i,ix)=>{const x=(i.n/span*100).toFixed(2),up=ix%2===0,lvl=Math.floor(ix/2)%2;
+  const top=up?(lvl?2:28):(lvl?118:92);
+  const al=x>82?"transform:translateX(-100%);text-align:right;left:6px":x<8?"transform:none;text-align:left;left:-6px":"";
+  return `<div class="pin ${i.k}" style="left:${x}%"><span style="top:${top}px;${al}"><b>${esc(i.l)}</b>${esc(i.s.length>30?i.s.slice(0,29)+"…":i.s)}</span></div>`}).join("");
+ return `<div class="tl"><div class="axis"><div class="line"></div><div class="today">today</div>${pins}</div>
+ <div class="legend"><span><i style="background:var(--hv)"></i>Your first moves</span><span><i style="background:var(--red)"></i>Dates that turn bad</span></div></div>`}
+
+function q4(a){return `${timeline(a)}<table><tr><th>What</th><th>When it turns bad</th><th>Why we think so</th><th>Source</th></tr>${a.q4.risks.map(r=>`<tr class="sev s-${esc(r.severity)}"><td><b>${esc(r.what)}</b><div style="margin-top:6px">${tag(r.severity)}</div></td><td>${esc(r.when)}</td><td class="meta">${esc(r.why)}</td><td>${chips(r.cites,4)}</td></tr>`).join("")}</table>`}
 
 function q5(a){return `<table><tr><th>What we don't know</th><th>Why it matters</th><th>Who could fill it</th><th>Source</th></tr>${a.q5.unknown.map(u=>`<tr><td><b>${esc(u.what)}</b></td><td class="meta">${esc(u.why)}</td><td>${u.ask?`${esc(u.ask.name)} ${chips([u.ask.id])}<div class="meta">${esc(u.ask.basis)}</div>`:"<span class=mute>nobody on file</span>"}</td><td>${chips(u.cites,4)}</td></tr>`).join("")}</table>`}
 
 function render(){const a=D.accounts[cur];
- document.getElementById("tabs").innerHTML=D.accounts.map((x,i)=>`<button class="${i===cur?"on":""}" onclick="cur=${i};render();scrollTo(0,0)">${esc(x.name)}<small>Account ${esc(x.id)}</small></button>`).join("");
+ document.getElementById("tabs").innerHTML=D.accounts.map((x,i)=>`<button class="${i===cur?"on":""}" onclick="cur=${i};render();scrollTo(0,0)">${esc(x.id)}: ${esc(x.name.split(" ")[0]+" "+(x.name.split(" ")[1]||""))}</button>`).join("");
  const L=D.live,ago=L.lastPoll?Math.round((Date.now()-Date.parse(L.lastPoll))/1000)+"s ago":"not yet";
- document.getElementById("live").innerHTML=L.tokenConfigured?`<span class="dot on"></span><b>Live</b><br>Last poll ${ago}, ${L.polls} polls<br>${L.notesWritten} notes written back<br>Last data change ${L.lastChange?new Date(L.lastChange).toLocaleTimeString():"none yet"}${L.busy?"<br>"+esc(L.busy):""}`:`<span class="dot"></span><b>Snapshot</b><br>No token on this server`;
- document.getElementById("live").innerHTML+=`<br>Data as of ${esc(String(D.asOf).slice(0,10))}`;
- const first=a.q3.moves[0];
- document.getElementById("main").innerHTML=
- `<div class="top"><h2>${esc(a.name)}</h2><p>${first?`First move: ${esc(first.title)}, due ${esc(first.due)}.`:""}</p></div>`+
- `<section id="q1"><h3>1. What the book is worth</h3><p class="ask">Each deal at a value that something backs. What can't be backed is shown apart.</p>${q1(a)}</section>`+
- `<section id="q2"><h3>2. Who holds the power</h3><p class="ask">For each deal: who decides, who pays, who uses it and who could block it, and where each person stands.</p>${q2(a)}</section>`+
- `<section id="q3"><h3>3. What to do first</h3><p class="ask">The first three moves, ranked, each with an owner and a date inside every deadline.</p>${q3(a)}</section>`+
- `<section id="q4"><h3>4. What goes wrong next</h3><p class="ask">Deadlines at risk, people going cold and stuck deals, with the date each turns bad.</p>${q4(a)}</section>`+
- `<section id="q5"><h3>5. What we don't know</h3><p class="ask">The gaps this plan rests on, and who could fill each one.</p>${q5(a)}</section>`;}
-async function load(){try{const r=await fetch("/api/crm");D=await r.json();render()}catch(e){document.getElementById("main").textContent="Could not load the CRM data: "+e}}
+ const lv=document.getElementById("live");lv.className="pulse"+(L.tokenConfigured?" on":"");
+ lv.innerHTML=L.tokenConfigured?`<i></i>live, polled ${ago}, ${L.notesWritten} notes written`:`<i></i>snapshot, no token on this server`;
+ const sec=(id,t,ask,body)=>`<section id="${id}"><div class="wrap"><h2>${t}</h2><p class="ask">${ask}</p>${body}</div></section>`;
+ document.getElementById("app").innerHTML=hero(a)+
+ sec("q1","1. What the book is worth","Each deal at a value that something backs. What can't be backed is shown apart.",q1(a))+
+ sec("q2","2. Who holds the power","For each deal: who decides, who pays, who uses it and who could block it, and where each person stands.",q2(a))+
+ sec("q3","3. What to do first","The first three moves, ranked, each with an owner and a date inside every deadline.",q3(a))+
+ sec("q4","4. What goes wrong next","Deadlines at risk, people going cold and stuck deals, with the date each turns bad.",q4(a))+
+ sec("q5","5. What we don't know","The gaps this plan rests on, and who could fill each one.",q5(a))+
+ `<footer><div class="wrap">Data as of ${esc(String(D.asOf).slice(0,10))}. Every figure above comes from a record you can open by clicking its source chip.</div></footer>`;}
+async function load(){try{const r=await fetch("/api/crm");D=await r.json();render()}catch(e){document.getElementById("app").textContent="Could not load the CRM data: "+e}}
 load();setInterval(()=>{fetch("/api/crm").then(r=>r.json()).then(d=>{D=d;if(!document.getElementById("drawer").classList.contains("open")){const y=scrollY;render();scrollTo(0,y)}}).catch(()=>{})},30000);
 </script></body></html>
