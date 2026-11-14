@@ -219,7 +219,7 @@ export function analyze(world, asOf = new Date()) {
         owner: { flytbase: "You (CSM)" + (myRole ? ` from ${myRole.from}` : ""), customer: cust ? { id: cite(cust.id), name: cust.name } : null, cite: cite(profileRef) },
         due: addDays(today, urgency === 2 ? 7 : days),
         why: [
-          o.deadline ? `A deadline sits on it: ${o.deadline.text}` : null,
+          o.deadline ? `A deadline sits on it: ${o.deadline.text}${a.deadlines.find((d) => d.text === o.deadline.text)?.minute == null ? " It has no date on file, so this date is the earliest safe one, and the real date still has to be asked for." : ""}` : null,
           strong.length ? `You already hold ${strong.length} verified source(s) for it.` : "Backed only by what people said.",
           o.blocker ? `Blocker (${o.blocker.status}): ${o.blocker.text}` : "No blocker identified yet.",
         ].filter(Boolean),
@@ -246,27 +246,30 @@ export function analyze(world, asOf = new Date()) {
     // ---------- Q5: what we do not know ----------
     const unknown = [];
     const SYN = [
-      [/finance|budget|saving|cost|quote|price|pay|invoice|verify/i, /finance|procure|commercial|budget/i, "finance"],
-      [/procure|tender|framework|contract/i, /procure|commercial|legal/i, "procurement"],
-      [/dock|force|site|plant|usage|flight|fly|adopt|roll ?out/i, /operator|inspector|unit|pilot|security|patrol|head|lead|manager/i, "uses the docks"],
-      [/network|it\b|link|connect|firewall/i, /\bit\b|network|security|infrastructure|engineer/i, "network"],
-      [/deputy|handover|know-how/i, /head|lead|deputy|manager|owner/i, "rollout"],
+      [/finance|budget|saving|cost|quote|price|pay|invoice|verify/i, /finance|procure|commercial|budget/i, "finance", 2],
+      [/procure|tender|framework/i, /procure|commercial|legal/i, "procurement", 2],
+      [/dock|force|site|plant|usage|flight|fly|adopt|roll ?out/i, /operator|inspector|unit|pilot|security|patrol|head|lead|manager/i, "uses the docks", 1],
+      [/network|\bit\b|firewall/i, /\bit\b|network|security|infrastructure|engineer/i, "network", 2],
+      [/deputy|handover|know-how/i, /head|lead|deputy|manager|owner/i, "rollout", 2],
     ];
-    const STOP = new Set(["the","and","for","with","that","this","from","were","was","not","any","one","name","named","who","which","into","about","than","have","been","their","them","she","her","his"]);
-    const words = (t) => new Set(String(t).toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(" ").filter((w) => w.length > 3 && !STOP.has(w)));
+    const STOP = new Set([...[a.name, "alliance eastern counties police aldermoor industrial group"].join(" ").toLowerCase().split(/\W+/).filter((w) => w.length > 3), "the","and","for","with","that","this","from","were","was","not","any","one","name","named","who","which","into","about","than","have","been","their","them","she","her","his"]);
+    const stem = (w) => w.replace(/(ing|es|s)$/, "");
+    const words = (t) => new Set(String(t).toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(" ").filter((w) => w.length > 3 && !STOP.has(w)).map(stem));
     const openDeals = a.opportunities.filter((o) => !["agreed"].includes(o.stage) && o.blocker?.status !== "cleared");
     const dealFor = (text) => {
-      const tw = words(text); let best = null, bs = 0;
+      const tw = words(text); let best = null, bs = 0, bShared = [], bLabels = [];
       for (const o of openDeals) {
-        const ow = words(`${o.title} ${o.blocker?.text ?? ""}`); let sc = 0; tw.forEach((w) => ow.has(w) && sc++);
-        for (const [re] of SYN) if (re.test(text) && re.test(`${o.title} ${o.blocker?.text ?? ""}`)) sc += 1.5;
-        if (sc > bs) { bs = sc; best = o; }
+        const blob = `${o.title} ${o.blocker?.text ?? ""} ${o.deadline?.text ?? ""}`, ow = words(blob); const shared = [...tw].filter((w) => ow.has(w));
+        let sc = shared.length; const labels = []; for (const [re, , lab, wt] of SYN) if (re.test(text) && re.test(blob)) { sc += wt; labels.push(lab); }
+        if (sc > bs) { bs = sc; best = o; bShared = shared; bLabels = labels; }
       }
-      return bs >= 1.5 ? best : null;
+      return bs >= 2 ? { o: best, shared: [...bShared, ...bLabels.filter((l) => !bShared.includes(l))] } : null;
     };
     const whyFor = (text, fallback) => {
-      const o = dealFor(text);
-      return o ? { why: `Likely matters for "${o.title}"${o.worth_up_to != null ? " (up to €" + o.worth_up_to.toLocaleString("en-GB") + ")" : ""}${o.blocker?.status === "open" ? ", blocked: " + o.blocker.text : ""}.`, deal: o.id } : { why: fallback, deal: null };
+      const m = dealFor(text);
+      if (!m) return { why: fallback, deal: null };
+      const o = m.o;
+      return { why: `Likely matters for "${o.title}"${o.worth_up_to != null ? " (up to €" + o.worth_up_to.toLocaleString("en-GB") + ")" : ""}${o.blocker?.status === "open" ? ", blocked: " + o.blocker.text : ""}. Linked by: ${m.shared.join(", ")}.`, deal: o.id };
     };
     const askBy = (text) => {
       const named = a.stakeholders.find((s) => text.toLowerCase().includes(s.name.toLowerCase()));

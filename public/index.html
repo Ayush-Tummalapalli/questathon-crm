@@ -19,7 +19,7 @@ body{margin:0;font:15px/1.55 var(--body);color:var(--ink);background:var(--sky);
 .seg button{font:600 13px var(--body);border:0;background:transparent;color:#a9c0d6;padding:7px 16px;border-radius:999px;cursor:pointer;white-space:nowrap}
 .seg button.on{background:#fff;color:var(--navy)}
 .jump{margin-left:auto;display:flex;gap:2px}.jump a{color:#a9c0d6;text-decoration:none;font-size:13px;padding:6px 10px;border-radius:6px}.jump a:hover{background:#1a4167;color:#fff}
-.pulse{font:500 12px var(--mono);color:#a9c0d6;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.pulse{text-decoration:none;font:500 12px var(--mono);color:#a9c0d6;display:flex;align-items:center;gap:8px;white-space:nowrap}
 .pulse i{width:8px;height:8px;border-radius:50%;background:#6f88a0}.pulse.on i{background:#3be08f;box-shadow:0 0 0 0 rgba(59,224,143,.6);animation:p 2.4s infinite}
 @keyframes p{70%{box-shadow:0 0 0 8px rgba(59,224,143,0)}100%{box-shadow:0 0 0 0 rgba(59,224,143,0)}}
 /* hero */
@@ -92,6 +92,10 @@ tr.sev td:first-child{border-left:5px solid var(--rule)}tr.s-high td:first-child
 #drawer.open{transform:none}
 #drawer pre{white-space:pre-wrap;font:12.5px/1.55 var(--mono);background:var(--sky);padding:14px;border-radius:10px}
 #drawer .x{float:right;border:0;background:none;font-size:26px;cursor:pointer;color:var(--mute)}
+.feed{list-style:none;margin:0;padding:0}.feed li{display:grid;grid-template-columns:78px 112px 1fr;gap:12px;padding:11px 18px;border-top:1px solid #e9f0f6;align-items:baseline}.feed li:first-child{border-top:0}
+.feed time{font:500 12px var(--mono);color:var(--mute)}.feed .k{font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;text-align:center}
+.k.data{background:var(--hv-bg);color:#b03e00}.k.note{background:var(--green-bg);color:var(--green)}.k.system{background:#e6f0fa;color:#1d5fa6}
+.livestat{display:flex;flex-wrap:wrap;gap:6px 26px;margin-bottom:12px;font-size:14px}.livestat b{font:700 18px var(--disp)}.livestat span{color:var(--mute);font-size:12.5px;display:block}
 footer{padding:50px 0 70px;color:var(--mute);font-size:13px}
 @media (max-width:900px){.jump{display:none}.board .hd{display:none}.board .row{grid-template-columns:44px 1fr}.board .who,.board .due{grid-column:2;text-align:left}table{display:block;overflow-x:auto}.pulse{display:none}.bar .wrap{gap:10px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
@@ -100,7 +104,7 @@ footer{padding:50px 0 70px;color:var(--mute);font-size:13px}
  <div class="logo"><i></i>Account CRM</div>
  <div class="seg" id="tabs"></div>
  <nav class="jump"><a href="#q1">Worth</a><a href="#q2">Power</a><a href="#q3">First moves</a><a href="#q4">Risks</a><a href="#q5">Unknowns</a></nav>
- <div class="pulse" id="live"></div>
+ <a class="pulse" id="live" href="#feed"></a>
 </div></header>
 <div id="app">Loading…</div>
 <aside id="drawer" aria-label="Source"><button class="x" onclick="closeD()" aria-label="Close">×</button><div id="dbody"></div></aside>
@@ -210,7 +214,14 @@ function render(){const a=D.accounts[cur];
  sec("q3","3. What to do first","The first three moves, ranked, each with an owner and a date inside every deadline.",q3(a))+
  sec("q4","4. What goes wrong next","Deadlines at risk, people going cold and stuck deals, with the date each turns bad.",q4(a))+
  sec("q5","5. What we don't know","The gaps this plan rests on, and who could fill each one.",q5(a))+
+ sec("feed","Live activity","What this CRM has done since the server started: new data it took in, how the answers changed because of it, and the notes it wrote back to the game.",liveFeed())+
  `<footer><div class="wrap">Data as of ${esc(String(D.asOf).slice(0,10))}. Every figure above comes from a record you can open by clicking its source chip.</div></footer>`;}
+function liveFeed(){const L=D.live,f=(L.feed||[]).filter(Boolean);
+ const next=L.nextPoll?Math.max(0,Math.round((Date.parse(L.nextPoll)-Date.now())/1000)):null;
+ const stat=`<div class="livestat"><div><b>${L.polls}</b><span>checks of the game</span></div><div><b>${L.lastPoll?Math.round((Date.now()-Date.parse(L.lastPoll))/1000)+"s":"–"}</b><span>since last check</span></div><div><b>${next==null?"–":next+"s"}</b><span>until next check</span></div><div><b>${L.notesWritten}</b><span>notes written back</span></div><div><b>${L.lastChange?new Date(L.lastChange).toLocaleTimeString():"none yet"}</b><span>last new data taken in</span></div></div>`;
+ const kind={data:"new data",note:"note written",system:"system"};
+ return stat+`<div class="card" style="padding:4px 0">${f.length?`<ul class="feed">${f.map(e=>`<li><time>${new Date(e.at).toLocaleTimeString()}</time><span class="k ${e.kind}">${kind[e.kind]||e.kind}</span><span>${esc(e.text)}</span></li>`).join("")}</ul>`:`<p class="meta" style="padding:14px 18px;margin:0">Nothing yet. When the game sends new data, it shows up here with what changed.</p>`}</div>
+ ${L.lastError?`<div class="flag"><b>Last error:</b> ${esc(L.lastError)}</div>`:""}`}
 async function load(){try{const r=await fetch("/api/crm");D=await r.json();render()}catch(e){document.getElementById("app").textContent="Could not load the CRM data: "+e}}
 load();setInterval(()=>{fetch("/api/crm").then(r=>r.json()).then(d=>{D=d;if(!document.getElementById("drawer").classList.contains("open")){const y=scrollY;render();scrollTo(0,y)}}).catch(()=>{})},30000);
 </script></body></html>
