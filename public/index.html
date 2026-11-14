@@ -77,12 +77,13 @@ td{padding:13px 16px;border-top:1px solid #e9f0f6;vertical-align:top}tr:first-ch
 .tl{position:relative;background:var(--paper);border-radius:14px;padding:18px 20px 12px;box-shadow:0 1px 0 var(--rule);margin-bottom:14px;overflow:hidden}
 .tl .axis{position:relative;height:150px;margin:0 10px}
 .tl .line{position:absolute;left:0;right:0;top:75px;height:3px;background:var(--rule);border-radius:2px}
-.tl .today{position:absolute;top:60px;left:0;font:700 11px var(--mono);color:var(--navy)}
+.tl .today{position:absolute;top:84px;left:-4px;font:700 11px var(--mono);color:var(--navy)}
 .tl .pin{position:absolute;width:0;transform:translateX(-50%)}
 .tl .pin:before{content:"";position:absolute;left:-6px;top:69px;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid #fff;box-shadow:0 0 0 1px var(--red)}
 .tl .pin.mv:before{background:var(--hv);box-shadow:0 0 0 1px var(--hv)}
 .tl .pin span{position:absolute;white-space:nowrap;font-size:11.5px;line-height:1.25;transform:translateX(-50%);text-align:center;color:var(--ink)}
 .tl .pin span b{display:block;font:700 11px var(--mono)}
+.rm{text-align:center;font-size:17px;color:var(--navy)}.rm.tt{color:var(--hv)}.rm.off{color:#b4c5d4}.rm .cite{font-size:10px}
 .legend{display:flex;gap:18px;font-size:12.5px;color:var(--mute);margin-top:4px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
 /* risk rows */
 tr.sev td:first-child{border-left:5px solid var(--rule)}tr.s-high td:first-child{border-left-color:var(--red)}tr.s-medium td:first-child{border-left-color:var(--hv)}tr.s-low td:first-child{border-left-color:var(--green)}
@@ -150,13 +151,24 @@ function q1(a){const q=a.q1;
  ${(x.quality||[]).map(z=>`<div class="note">Data quality: ${esc(z.text)}</div>`).join("")}`}).join("")}
  <h4>Dock usage, last ${q.usage.windowWeeks} weeks</h4><p style="margin:0">${num(q.usage.withFlights,x=>x)} of ${q.usage.docks} docks logged flights.</p><div class="note">${esc(q.usage.caveat)}</div>`}
 
+function titleRoles(p){const t=(p.role||"").toLowerCase(),o=new Set();
+ if(/finance|procure|budget|purchas|commercial/.test(t))o.add("pays");
+ if(/head|director|chief|lead|owner|sponsor|commander|superintendent|manager|vp|programme/.test(t))o.add("decides");
+ if(/inspector|operator|pilot|analyst|engineer|officer|security|unit|dock|patrol/.test(t))o.add("uses");
+ return o}
+function cell(p,role){const ev=(p.tags||[]).find(t=>t.tag===role);
+ if(ev)return `<div class="rm on" title="From the record">${"●"}<div>${chips(ev.cites,2)}</div></div>`;
+ if(titleRoles(p).has(role))return `<div class="rm tt" title="Inferred from the job title only">${"◐"}<div class="meta">title only</div></div>`;
+ return `<div class="rm off">–</div>`}
 function q2(a){const q=a.q2;
- const person=p=>`<tr><td><b>${esc(p.name)}</b> ${chips([p.id],1)}<div class="meta">${esc(p.role)}${p.available?"":", away"}</div><div style="margin-top:6px">${tag(p.relationship)}</div></td>
- <td>${(p.tags||[]).map(t=>`<b>${esc(t.tag)}</b> ${chips(t.cites,3)}`).join("<br>")||"<span class=mute>no role evidence</span>"}</td>
+ const person=p=>`<tr><td><b>${esc(p.name)}</b> ${chips([p.id],1)}<div class="meta">${esc(p.role)}${p.available?"":", away"}</div></td>
+ <td>${tag(p.relationship)}</td><td>${cell(p,"decides")}</td><td>${cell(p,"pays")}</td><td>${cell(p,"uses")}</td><td>${cell(p,"could block")}</td>
  <td class="meta">${p.lastContact?`${esc(p.lastContact.date)}: ${esc(p.lastContact.note)} ${chips([p.lastContact.cite])}`:"no contact on file"}${p.signIns?`<br>Last sign-in ${esc(p.signIns.last??"never")} ${chips([p.signIns.cite])}`:""}</td></tr>`;
- return `<div class="note" style="margin:0 0 6px">${esc(q.note)}</div>
- ${q.perDeal.map(d=>`<h4>${esc(d.title)} <span class="meta">stage ${esc(d.stage)}</span></h4>${d.blocker?`<div class="meta" style="margin-bottom:8px">Blocker (${esc(d.blocker.status)}): ${esc(d.blocker.text)}</div>`:""}
- <table><tr><th>Person and where they stand</th><th>Role in this deal: decides, pays, uses, could block</th><th>Last contact</th></tr>${d.people.map(person).join("")||"<tr><td colspan=3 class=mute>No named person on file for this deal.</td></tr>"}</table>`).join("")}
+ return `<div class="note" style="margin:0 0 6px">● the record says so, with its source. ◐ guessed from the job title only. – nothing on file. ${esc(q.note)}</div>
+ ${q.perDeal.map(d=>{const none=["decides","pays","uses","could block"].filter(r=>!d.people.some(p=>(p.tags||[]).some(t=>t.tag===r)||titleRoles(p).has(r)));
+ return `<h4>${esc(d.title)} <span class="meta">stage ${esc(d.stage)}</span></h4>${d.blocker?`<div class="meta" style="margin-bottom:8px">Blocker (${esc(d.blocker.status)}): ${esc(d.blocker.text)}</div>`:""}
+ <table><tr><th>Person</th><th>Stands</th><th>Decides</th><th>Pays</th><th>Uses</th><th>Could block</th><th>Last contact</th></tr>${d.people.map(person).join("")||"<tr><td colspan=7 class=mute>No named person on file for this deal.</td></tr>"}</table>
+ ${none.length?`<div class="note" style="color:var(--red)">Nobody on file for: ${none.join(", ")}.</div>`:""}`}).join("")}
  <div class="flag"><b>Roles nobody has named</b><ul style="margin:6px 0 0 18px;padding:0">${q.notOnFile.map(n=>`<li>${esc(n.text)} ${chips(n.cites,3)}</li>`).join("")}</ul></div>`}
 
 function q3(a){const q=a.q3;
@@ -173,13 +185,14 @@ function timeline(a){const items=[];
  a.q3.moves.forEach(m=>items.push({d:m.due,l:`Move ${m.rank}`,s:m.title,k:"mv"}));
  a.q4.risks.forEach(r=>{const m=String(r.when).match(/\d{4}-\d{2}-\d{2}/);if(m)items.push({d:m[0],l:m[0].slice(5),s:r.what,k:"rk"})});
  const dd=items.map(i=>({...i,n:days(i.d)})).filter(i=>i.n>=0).sort((x,y)=>x.n-y.n);
- if(!dd.length)return"";const span=Math.max(14,dd[dd.length-1].n)*1.04;
- const pins=dd.map((i,ix)=>{const x=(i.n/span*100).toFixed(2),up=ix%2===0,lvl=Math.floor(ix/2)%2;
-  const top=up?(lvl?2:28):(lvl?118:92);
-  const al=x>82?"transform:translateX(-100%);text-align:right;left:6px":x<8?"transform:none;text-align:left;left:-6px":"";
-  return `<div class="pin ${i.k}" style="left:${x}%"><span style="top:${top}px;${al}"><b>${esc(i.l)}</b>${esc(i.s.length>30?i.s.slice(0,29)+"…":i.s)}</span></div>`}).join("");
- return `<div class="tl"><div class="axis"><div class="line"></div><div class="today">today</div>${pins}</div>
- <div class="legend"><span><i style="background:var(--hv)"></i>Your first moves</span><span><i style="background:var(--red)"></i>Dates that turn bad</span></div></div>`}
+ if(!dd.length)return"";const near=dd.filter(i=>i.n<=60),WIN=Math.max(21,Math.min(60,Math.ceil(Math.max(0,...near.map(i=>i.n))*1.3))),inw=dd.filter(i=>i.n<=WIN),later=dd.filter(i=>i.n>WIN);
+ const clip=t=>t.length>34?t.slice(0,33)+"…":t;
+ const pins=inw.map((i,ix)=>{const x=(i.n/WIN*96).toFixed(2),up=ix%2===0,lvl=Math.floor(ix/2)%3;
+  const top=up?[40,14,-6][lvl]:[104,128,150][lvl];
+  const al=Number(x)>78?"transform:translateX(-100%);text-align:right;left:6px":Number(x)<10?"transform:none;text-align:left;left:-6px":"";
+  return `<div class="pin ${i.k}" style="left:${x}%"><span style="top:${top}px;${al}"><b>${esc(i.l)}, day ${i.n}</b>${esc(clip(i.s))}</span></div>`}).join("");
+ return `<div class="tl"><div class="axis" style="height:170px"><div class="line"></div><div class="today">today</div>${pins}</div>
+ <div class="legend"><span><i style="background:var(--hv)"></i>Your first moves</span><span><i style="background:var(--red)"></i>Dates that turn bad</span><span>Next ${WIN} days shown from ${esc(String(D.asOf).slice(0,10))}</span>${later.length?`<span>Later: ${later.map(i=>esc(i.l)+" ("+i.n+" days)").join(", ")}</span>`:""}</div></div>`}
 
 function q4(a){return `${timeline(a)}<table><tr><th>What</th><th>When it turns bad</th><th>Why we think so</th><th>Source</th></tr>${a.q4.risks.map(r=>`<tr class="sev s-${esc(r.severity)}"><td><b>${esc(r.what)}</b><div style="margin-top:6px">${tag(r.severity)}</div></td><td>${esc(r.when)}</td><td class="meta">${esc(r.why)}</td><td>${chips(r.cites,4)}</td></tr>`).join("")}</table>`}
 

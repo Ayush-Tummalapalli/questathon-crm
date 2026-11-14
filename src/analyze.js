@@ -181,7 +181,12 @@ export function analyze(world, asOf = new Date()) {
       const metNow = a.facts.some((f) => f.said_by === c.name);
       if (gap != null && gap > 30 && !metNow) risk(gap > 60 ? "high" : "medium", `${c.name} going cold`, `${gap} days since contact`, c.note ?? "", profileRef);
     }
-    for (const u of users.filter((x) => x.sign_ins_last_90_days === 0)) risk("medium", `${u.name ?? u.role} has not signed in for 90+ days`, `last ${u.last_sign_in}`, u.role, `${a.id}:${u.user_id}`);
+    {
+      const idle = users.filter((x) => x.sign_ins_last_90_days === 0);
+      const named = idle.filter((u) => u.name), unnamed = idle.filter((u) => !u.name);
+      for (const u of named) risk("medium", `${u.name} has not signed in for 90+ days`, u.last_sign_in ? `last sign-in ${u.last_sign_in}` : "never signed in", `${u.role}. Nobody has used this login lately.`, `${a.id}:${u.user_id}`);
+      if (unnamed.length) risk("medium", `${unnamed.length} logins with no name on file have not signed in for 90+ days (${[...new Set(unnamed.map((u) => u.role))].join(", ")})`, "now", "The user record names only people on file as contacts, so we cannot say who they are. Unused logins often mean the dock is not used either.", ...unnamed.map((u) => `${a.id}:${u.user_id}`));
+    }
     for (const i of inv.filter((x) => !/paid/i.test(x.status))) risk("high", `Invoice ${i.number} ${i.status}`, i.issued, i.what, i.number);
     const stale = devices.filter((d) => d.last_seen_online && daysBetween(d.last_seen_online, today) > 7);
     if (stale.length) risk("high", `${stale.length} dock(s) not seen online for over a week`, "now", stale.map((d) => d.dock_id).join(", "), ...stale.map((d) => `${a.id}:${d.dock_id}`));
