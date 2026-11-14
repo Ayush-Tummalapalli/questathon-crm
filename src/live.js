@@ -31,7 +31,10 @@ const persist = () => { try { writeFileSync(STATE, JSON.stringify(state)); } cat
 export let current = null;
 let world = null;
 export function recompute() {
-  try { world = loadWorld(); current = analyze(world, new Date()); }
+  try {
+    world = loadWorld(); current = analyze(world, new Date());
+    for (const k of current.skipped ?? []) { const key = k.id + k.error; if (state.skipSeen !== key) { state.skipSeen = key; addFeed("system", `Could not analyse ${k.name ?? k.id}: ${k.error}`); } }
+  }
   catch (e) { say("could not analyse, keeping the last good answer: " + String(e.message).slice(0, 120)); if (!current) throw e; }
   return current;
 }

@@ -18,6 +18,7 @@ export function analyze(world, asOf = new Date()) {
     return { value, cites: c };
   };
 
+  const skipped = [];
   const accounts = world.export.accounts.map((a) => { try {
     const pw = world.paperwork[a.id] ?? {};
     const profile = pw["profile.json"]?.json;
@@ -308,8 +309,8 @@ export function analyze(world, asOf = new Date()) {
     const q5 = { unknown };
 
     return { id: a.id, name: a.name, q1, q2, q3, q4, q5 };
-  } catch (e) { console.error(`[analyze] account ${a.id} skipped: ${e.message}`); return null; } }).filter(Boolean);
-  return { asOf: today, exportedAt: world.export.exported_at, accounts, refs };
+  } catch (e) { console.error(`[analyze] account ${a.id} skipped: ${e.message}`); skipped.push({ id: a.id, name: a.name, error: String(e.stack ?? e.message).split("\n").slice(0, 2).join(" | ").slice(0, 240) }); return null; } }).filter(Boolean);
+  return { asOf: today, exportedAt: world.export.exported_at, accounts, refs, skipped };
 }
 
 const sev = (s) => ({ high: 3, medium: 2, low: 1 }[s] ?? 0);
