@@ -6,7 +6,13 @@
   "description": "Live CRM that reads Account Quest data through the MCP and answers five questions per account.",
   "scripts": {
     "start": "node server.js",
-    "ping": "node scripts/ping.js"
+    "ping": "node scripts/ping.js",
+    "pull": "node scripts/pull.js",
+    "analyze": "node scripts/analyze.js",
+    "check": "node scripts/check-citations.js",
+    "test": "node scripts/check-citations.js && node scripts/test-diff.js"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }
