@@ -11,6 +11,8 @@ import { analyze } from "./analyze.js";
 
 const RAW = new URL("../data/raw/", import.meta.url).pathname;
 const STATE = new URL("../data/live_state.json", import.meta.url).pathname;
+// The game stamps every export with the time it was made; that must not count as a change.
+const stable = (v) => { if (v && typeof v === "object" && !Array.isArray(v)) { const { exported_at, generated_at, fetched_at, ...rest } = v; return rest; } return v; };
 const hash = (v) => createHash("sha1").update(JSON.stringify(v)).digest("hex").slice(0, 10);
 const save = (n, v) => { mkdirSync(RAW, { recursive: true }); writeFileSync(RAW + n.replace(/[^\w.-]+/g, "_") + ".json", JSON.stringify(v, null, 2)); };
 
@@ -23,6 +25,7 @@ const say = (m) => { status.log.unshift({ at: new Date().toISOString(), m }); st
 
 let state = { exportHash: null, signalHash: null, noteFps: {} };
 try { if (existsSync(STATE)) state = { ...state, ...JSON.parse(readFileSync(STATE, "utf8")) }; } catch {}
+if (state.hv !== 2) { state.exportHash = null; state.hv = 2; } // hash definition changed
 const persist = () => { try { writeFileSync(STATE, JSON.stringify(state)); } catch {} };
 
 export let current = null;
@@ -68,7 +71,7 @@ async function refreshAll(reason) {
   status.busy = "refreshing: " + reason; say("refreshing (" + reason + ")");
   const before = digest(); addFeed("data", `New data detected (${reason}). Pulling accounts and records.`);
   const accounts = await callTool("get_my_accounts"); save("get_my_accounts", accounts);
-  state.exportHash = hash(accounts);
+  state.exportHash = hash(stable(accounts));
   for (const a of accounts.accounts) { save(`paperwork_${a.id}`, await callTool("get_all_paperwork", { account: a.id })); }
   for (const f of accounts.files ?? []) {
     if (!existsSync(RAW + `file_${f.id}.json`)) save(`file_${f.id}`, await callTool("get_file", { id: f.id }));
@@ -110,8 +113,8 @@ async function poll() {
     if (tick % 5 === 0) {
       const accounts = await callTool("get_my_accounts");
       status.lastPoll = new Date().toISOString();
-      if (state.exportHash && hash(accounts) !== state.exportHash) { save("get_my_accounts", accounts); await refreshAll("accounts changed"); }
-      else { state.exportHash = hash(accounts); }
+      if (state.exportHash && hash(stable(accounts)) !== state.exportHash) { save("get_my_accounts", accounts); await refreshAll("accounts changed"); }
+      else { state.exportHash = hash(stable(accounts)); }
     } else {
       const sig = await callTool("get_signals");
       status.lastPoll = new Date().toISOString();
@@ -133,7 +136,9 @@ export function startLive() {
   (async () => {
     try { // after a restart on a host with a fresh disk, learn which moves are already written
       const notes = await callTool("list_notes");
-      for (const m of JSON.stringify(notes).matchAll(/\[crm:(\w+):(\w+)\]/g)) state.noteFps[m[1]] = m[2];
+      let found = 0;
+      for (const m of JSON.stringify(notes).matchAll(/\[crm:(\w+):(\w+)\]/g)) { state.noteFps[m[1]] = m[2]; found++; }
+      if (found) { status.notesWritten += found; addFeed("note", `${found} next-step notes written earlier are already in the game, so they are not repeated.`); }
       persist();
     } catch (e) { say("list_notes failed: " + String(e.message).slice(0, 120)); }
     await writeBack().catch(() => {}); for (;;) { await poll(); status.nextPoll = new Date(Date.now() + 65_000).toISOString(); await new Promise((r) => setTimeout(r, 65_000)); } })();
